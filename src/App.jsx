@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
@@ -7,19 +7,24 @@ import { KaitaiStream } from 'kaitai-struct';
 import SpyroLevel from './kaitai/parsers/SpyroLevel';
 import { LevelSelector } from './components/LevelSelector';
 
-// Separate the main app logic into a component that can access URL params
 function LevelViewer() {
-  const { levelPath } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [gameData, setGameData] = useState(null);
   const [currentLevelPath, setCurrentLevelPath] = useState(null);
   const [level, setLevel] = useState(null);
   const [isHighPoly, setIsHighPoly] = useState(true);
 
-  // Modified setCurrentLevelPath to update URL
+  // Extract the levelPath from the URL
+  const levelPath = location.pathname.startsWith('/level/')
+    ? location.pathname.replace('/level/', '')
+    : '';
+
+  // Modified handleLevelPathChange to update URL
   const handleLevelPathChange = (path) => {
     // Remove '/levels/' prefix and '/sub1' suffix for cleaner URLs
     const urlPath = path.replace('/levels/', '').replace('/sub1', '');
+    console.log('Navigating to:', urlPath);
     navigate(`/level/${urlPath}`);
     setCurrentLevelPath(`/levels/${urlPath}/sub1`); // Keep sub1 for actual file path
   };
@@ -42,10 +47,12 @@ function LevelViewer() {
             const fullPath = `/levels/${gameName}/${firstLevelNameSnake}/sub1`;
             handleLevelPathChange(fullPath);
           } else {
+            console.log('Setting current level path from URL:', levelPath);
             setCurrentLevelPath(`/levels/${levelPath}/sub1`);
           }
         } else if (!currentLevelPath && !levelPath) { // Only set default if we have neither
           // Set default level if no URL path
+          console.log('No level path provided, setting default level...');
           const gameName = levelsData.game_name.toLowerCase();
           const firstLevelNameSnake = toSnakeCase(levelsData.homeworlds[0].name);
           const defaultPath = `/levels/${gameName}/${firstLevelNameSnake}/sub1`;
@@ -132,7 +139,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LevelViewer />} />
-        <Route path="/level/:levelPath/*" element={<LevelViewer />} />
+        <Route path="/level/*" element={<LevelViewer />} />
       </Routes>
     </BrowserRouter>
   );
