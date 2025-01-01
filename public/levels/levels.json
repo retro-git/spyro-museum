@@ -1,0 +1,151 @@
+{
+  "game_name": "spyro1",
+  "homeworlds": [
+    {
+      "name": "Artisans",
+      "levels": [
+        {
+          "name": "Stone Hill",
+          "type": "standard"
+        },
+        {
+          "name": "Dark Hollow",
+          "type": "standard"
+        },
+        {
+          "name": "Town Square",
+          "type": "standard"
+        },
+        {
+          "name": "Toasty",
+          "type": "boss"
+        },
+        {
+          "name": "Sunny Flight",
+          "type": "flight"
+        }
+      ]
+    },
+    {
+      "name": "Peace Keepers",
+      "levels": [
+        {
+          "name": "Dry Canyon",
+          "type": "standard"
+        },
+        {
+          "name": "Cliff Town",
+          "type": "standard"
+        },
+        {
+          "name": "Ice Cavern",
+          "type": "standard"
+        },
+        {
+          "name": "Shemp",
+          "type": "boss"
+        },
+        {
+          "name": "Night Flight",
+          "type": "flight"
+        }
+      ]
+    },
+    {
+      "name": "Magic Crafters",
+      "levels": [
+        {
+          "name": "Alpine Ridge",
+          "type": "standard"
+        },
+        {
+          "name": "High Caves",
+          "type": "standard"
+        },
+        {
+          "name": "Wizard Peak",
+          "type": "standard"
+        },
+        {
+          "name": "Blowhard",
+          "type": "boss"
+        },
+        {
+          "name": "Crystal Flight",
+          "type": "flight"
+        }
+      ]
+    },
+    {
+      "name": "Beast Makers",
+      "levels": [
+        {
+          "name": "Terrace Village",
+          "type": "standard"
+        },
+        {
+          "name": "Misty Bog",
+          "type": "standard"
+        },
+        {
+          "name": "Tree Tops",
+          "type": "standard"
+        },
+        {
+          "name": "Metalhead",
+          "type": "boss"
+        },
+        {
+          "name": "Wild Flight",
+          "type": "flight"
+        }
+      ]
+    },
+    {
+      "name": "Dream Weavers",
+      "levels": [
+        {
+          "name": "Dark Passage",
+          "type": "standard"
+        },
+        {
+          "name": "Lofty Castle",
+          "type": "standard"
+        },
+        {
+          "name": "Haunted Towers",
+          "type": "standard"
+        },
+        {
+          "name": "Jacques",
+          "type": "boss"
+        },
+        {
+          "name": "Icy Flight",
+          "type": "flight"
+        }
+      ]
+    },
+    {
+      "name": "Gnasty's World",
+      "levels": [
+        {
+          "name": "Gnorc Cove",
+          "type": "standard"
+        },
+        {
+          "name": "Twilight Harbor",
+          "type": "standard"
+        },
+        {
+          "name": "Gnasty Gnorc",
+          "type": "boss"
+        },
+        {
+          "name": "Gnasty's Loot",
+          "type": "bonus"
+        }
+      ]
+    }
+  ]
+}

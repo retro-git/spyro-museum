@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "kaitai": "node ./src/kaitai/kaitai.js"
+    "kaitai": "node ./src/kaitai/kaitai.js",
+    "dump": "node src/scripts/waddump.js wad.wad public/levels"
   },
   "dependencies": {
     "@react-three/drei": "^9.120.5",
