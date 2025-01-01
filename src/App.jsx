@@ -98,9 +98,9 @@ function PartMesh({ part }) {
         // Choose the appropriate color
         const color = highfarColors[colorIndex]
         newColors.push(
-          color.r / 255, // Normalize to [0, 1]
-          color.g / 255,
-          color.b / 255
+          Math.pow(color.r / 255, 1.5), // Gamma correction to enhance colors
+          Math.pow(color.g / 255, 1.5),
+          Math.pow(color.b / 255, 1.5)
         )
 
         // Assign the new index
