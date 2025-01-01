@@ -186,12 +186,18 @@ function PartMesh({ part, isHighPoly }) {
       const iv2 = getUniqueVertexIndex(v2, c2);
       const iv3 = getUniqueVertexIndex(v3, c3);
 
-      if (!poly.inverseSide) {
-        newIndices.push(iv0, iv1, iv3);
-        newIndices.push(iv1, iv2, iv3);
+      if (isHighPoly) {
+        if (!poly.inverseSide) {
+          newIndices.push(iv0, iv1, iv3);
+          newIndices.push(iv1, iv2, iv3);
+        } else {
+          newIndices.push(iv1, iv0, iv3);
+          newIndices.push(iv1, iv3, iv2);
+        }
       } else {
-        newIndices.push(iv1, iv0, iv3);
-        newIndices.push(iv1, iv3, iv2);
+        // Low poly always uses this winding order
+        newIndices.push(iv1, iv0, iv2);
+        newIndices.push(iv1, iv2, iv3);
       }
     });
 
