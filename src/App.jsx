@@ -1,37 +1,54 @@
+import { BrowserRouter, Routes, Route, useParams, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { KaitaiStream } from 'kaitai-struct';
 import SpyroLevel from './kaitai/parsers/SpyroLevel';
+import { LevelSelector } from './components/LevelSelector';
 
-function App() {
+// Separate the main app logic into a component that can access URL params
+function LevelViewer() {
+  const { levelPath } = useParams();
+  const navigate = useNavigate();
   const [gameData, setGameData] = useState(null);
   const [currentLevelPath, setCurrentLevelPath] = useState(null);
   const [level, setLevel] = useState(null);
 
+  // Modified setCurrentLevelPath to update URL
+  const handleLevelPathChange = (path) => {
+    // Remove '/levels/' prefix and '/sub1' suffix for cleaner URLs
+    const urlPath = path.replace('/levels/', '').replace('/sub1', '');
+    navigate(`/level/${urlPath}`);
+    setCurrentLevelPath(`/levels/${urlPath}/sub1`); // Keep sub1 for actual file path
+  };
+
   useEffect(() => {
     const fetchLevels = async () => {
       try {
-        console.log('Fetching levels from: /levels/levels.json');
         const response = await fetch('/levels/levels.json');
-        console.log('Response status:', response.status);
         const levelsData = await response.json();
-        console.log('Levels data:', levelsData);
         setGameData(levelsData);
 
-        // Set default level if available
-        if (
-          levelsData.homeworlds &&
-          levelsData.homeworlds.length > 0 &&
-          levelsData.homeworlds[0].levels &&
-          levelsData.homeworlds[0].levels.length > 0
-        ) {
+        // If we have a levelPath from URL, use it
+        if (levelPath) {
+          // Make sure the levelPath includes both game and level names
+          const pathParts = levelPath.split('/');
+          if (pathParts.length === 1) {
+            // If only game name is provided, redirect to the first level
+            const gameName = pathParts[0];
+            const firstLevelNameSnake = toSnakeCase(levelsData.homeworlds[0].name);
+            const fullPath = `/levels/${gameName}/${firstLevelNameSnake}/sub1`;
+            handleLevelPathChange(fullPath);
+          } else {
+            setCurrentLevelPath(`/levels/${levelPath}/sub1`);
+          }
+        } else if (!currentLevelPath && !levelPath) { // Only set default if we have neither
+          // Set default level if no URL path
           const gameName = levelsData.game_name.toLowerCase();
           const firstLevelNameSnake = toSnakeCase(levelsData.homeworlds[0].name);
-          const path = `/levels/${gameName}/${firstLevelNameSnake}/sub1`;
-          console.log('Setting default level path:', path);
-          setCurrentLevelPath(path);
+          const defaultPath = `/levels/${gameName}/${firstLevelNameSnake}/sub1`;
+          handleLevelPathChange(defaultPath);
         }
       } catch (error) {
         console.error('Error fetching levels:', error);
@@ -39,7 +56,7 @@ function App() {
     };
 
     fetchLevels();
-  }, []);
+  }, [levelPath]); // Remove currentLevelPath from dependencies
 
   useEffect(() => {
     if (!currentLevelPath) return;
@@ -93,7 +110,7 @@ function App() {
           gameName={gameData.game_name}
           homeworlds={gameData.homeworlds}
           currentLevelPath={currentLevelPath}
-          setCurrentLevelPath={setCurrentLevelPath}
+          setCurrentLevelPath={handleLevelPathChange}
           toSnakeCase={toSnakeCase}
         />
       )}
@@ -101,157 +118,15 @@ function App() {
   );
 }
 
-function LevelSelector({
-  gameName,
-  homeworlds,
-  currentLevelPath,
-  setCurrentLevelPath,
-  toSnakeCase,
-}) {
-  const [expandedHomeworlds, setExpandedHomeworlds] = useState({});
-
-  const toggleHomeworld = (name) => {
-    setExpandedHomeworlds((prev) => ({
-      ...prev,
-      [name]: !prev[name],
-    }));
-  };
-
-  const handleLevelClick = (levelName) => {
-    const gameNameLower = gameName.toLowerCase();
-    const levelNameSnake = toSnakeCase(levelName);
-    const path = `/levels/${gameNameLower}/${levelNameSnake}/sub1`;
-    setCurrentLevelPath(path);
-  };
-
+// Main App component now just handles routing
+function App() {
   return (
-    <div className="level-selector">
-      <h2>Select a Level</h2>
-      <div className="homeworlds">
-        {homeworlds.map((homeworld) => (
-          <div key={homeworld.name} className="homeworld">
-            <div
-              className="homeworld-header"
-              onClick={() => toggleHomeworld(homeworld.name)}
-            >
-              {homeworld.name}
-              <span className="toggle-icon">
-                {expandedHomeworlds[homeworld.name] ? '-' : '+'}
-              </span>
-            </div>
-            {expandedHomeworlds[homeworld.name] && (
-              <ul className="levels-list">
-                <li
-                  className={
-                    currentLevelPath.includes(toSnakeCase(homeworld.name))
-                      ? 'active'
-                      : ''
-                  }
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleLevelClick(homeworld.name);
-                  }}
-                >
-                  Homeworld
-                </li>
-                {homeworld.levels.map((level) => (
-                  <li
-                    key={level.name}
-                    className={
-                      currentLevelPath.includes(toSnakeCase(level.name))
-                        ? 'active'
-                        : ''
-                    }
-                    onClick={() => handleLevelClick(level.name)}
-                  >
-                    {level.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
-      </div>
-      <style>
-        {`
-          .level-selector {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            width: 250px;
-            max-height: 90vh;
-            overflow-y: auto;
-            z-index: 1000;
-          }
-
-          .level-selector h2 {
-            margin: 0;
-            margin-bottom: 15px;
-            font-size: 18px;
-            text-align: center;
-            border-bottom: 1px solid #555;
-            padding-bottom: 5px;
-          }
-
-          .homeworlds {
-            display: flex;
-            flex-direction: column;
-          }
-
-          .homeworld {
-            margin-bottom: 10px;
-          }
-
-          .homeworld-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            background: #333;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-          }
-
-          .homeworld-header:hover {
-            background: #444;
-          }
-
-          .toggle-icon {
-            font-size: 18px;
-            line-height: 1;
-          }
-
-          .levels-list {
-            list-style: none;
-            padding: 0;
-            margin: 5px 0 0 0;
-          }
-
-          .levels-list li {
-            padding: 6px 10px;
-            margin: 4px 0;
-            cursor: pointer;
-            background: #555;
-            border-radius: 4px;
-            transition: background 0.3s;
-          }
-
-          .levels-list li:hover {
-            background: #666;
-          }
-
-          .levels-list li.active {
-            background: #777;
-            font-weight: bold;
-          }
-        `}
-      </style>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LevelViewer />} />
+        <Route path="/level/:levelPath/*" element={<LevelViewer />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
