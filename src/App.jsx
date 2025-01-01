@@ -102,11 +102,6 @@ function LevelViewer() {
 
   return (
     <div className="container">
-      <div style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}>
-        <button onClick={() => setIsHighPoly(!isHighPoly)}>
-          {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
-        </button>
-      </div>
       <Canvas
         style={{ width: '100vw', height: '100vh', background: '#222' }}
         camera={{ position: [0, 5, 15], fov: 60 }}
