@@ -87,3 +87,22 @@ $transition-speed: 0.2s;
     background: $active-bg;
     font-weight: bold;
 }
+
+.controls {
+    margin: 10px 0;
+    padding: 0 15px;
+}
+
+.polyToggle {
+    width: 100%;
+    padding: 8px;
+    background: #444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background: #555;
+    }
+}

@@ -7,6 +7,8 @@ export function LevelSelector({
     currentLevelPath,
     setCurrentLevelPath,
     toSnakeCase,
+    isHighPoly,
+    setIsHighPoly,
 }) {
     const [expandedHomeworlds, setExpandedHomeworlds] = useState({});
 
@@ -27,6 +29,14 @@ export function LevelSelector({
     return (
         <div className={styles.container}>
             <h2 className={styles.title}>Select a Level</h2>
+            <div className={styles.controls}>
+                <button
+                    className={styles.polyToggle}
+                    onClick={() => setIsHighPoly(!isHighPoly)}
+                >
+                    {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
+                </button>
+            </div>
             <div className={styles.homeworldsList}>
                 {homeworlds.map((homeworld) => (
                     <div key={homeworld.name}>

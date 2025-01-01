@@ -14,6 +14,7 @@ function LevelViewer() {
   const [gameData, setGameData] = useState(null);
   const [currentLevelPath, setCurrentLevelPath] = useState(null);
   const [level, setLevel] = useState(null);
+  const [isHighPoly, setIsHighPoly] = useState(true);
 
   // Modified setCurrentLevelPath to update URL
   const handleLevelPathChange = (path) => {
@@ -94,6 +95,11 @@ function LevelViewer() {
 
   return (
     <div className="container">
+      <div style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}>
+        <button onClick={() => setIsHighPoly(!isHighPoly)}>
+          {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
+        </button>
+      </div>
       <Canvas
         style={{ width: '100vw', height: '100vh', background: '#222' }}
         camera={{ position: [0, 5, 15], fov: 60 }}
@@ -102,7 +108,7 @@ function LevelViewer() {
         <ambientLight intensity={1.3} />
         {level &&
           level.partHeaders.map((part, index) => (
-            <PartMesh key={index} part={part.body} />
+            <PartMesh key={index} part={part.body} isHighPoly={isHighPoly} />
           ))}
       </Canvas>
       {gameData && (
@@ -112,6 +118,8 @@ function LevelViewer() {
           currentLevelPath={currentLevelPath}
           setCurrentLevelPath={handleLevelPathChange}
           toSnakeCase={toSnakeCase}
+          isHighPoly={isHighPoly}
+          setIsHighPoly={setIsHighPoly}
         />
       )}
     </div>
@@ -130,14 +138,17 @@ function App() {
   );
 }
 
-function PartMesh({ part }) {
+function PartMesh({ part, isHighPoly }) {
   const geometry = useMemo(() => {
     if (!part) return null;
 
-    const { highvertices, highvertColors, highpolys, highfarColors } = part;
+    // Select vertices, polys, and colors based on poly mode
+    const vertices = isHighPoly ? part.highvertices : part.lowvertices;
+    const polys = isHighPoly ? part.highpolys : part.lowpolys;
+    const colors = isHighPoly ? part.highfarColors : part.lowvertColors;
 
-    if (!highvertices || !highpolys) return null;
-    if (highvertices.length === 0 || highpolys.length === 0) return null;
+    if (!vertices || !polys) return null;
+    if (vertices.length === 0 || polys.length === 0) return null;
 
     const newPositions = [];
     const newColors = [];
@@ -150,10 +161,10 @@ function PartMesh({ part }) {
       if (vertexColorMap[key] !== undefined) {
         return vertexColorMap[key];
       } else {
-        const originalVertex = highvertices[vertexIndex];
+        const originalVertex = vertices[vertexIndex];
         newPositions.push(originalVertex.x, originalVertex.y, originalVertex.z);
 
-        const color = highfarColors[colorIndex];
+        const color = colors[colorIndex];
         newColors.push(
           Math.pow(color.r / 255, 1.5),
           Math.pow(color.g / 255, 1.5),
@@ -166,7 +177,7 @@ function PartMesh({ part }) {
       }
     };
 
-    highpolys.forEach((poly) => {
+    polys.forEach((poly) => {
       const { v0, v1, v2, v3 } = poly.vert;
       const { c0, c1, c2, c3 } = poly.color;
 
@@ -192,7 +203,7 @@ function PartMesh({ part }) {
     geom.computeVertexNormals();
 
     return geom;
-  }, [part]);
+  }, [part, isHighPoly]);
 
   if (!geometry) return null;
 
