@@ -1,3 +1,5 @@
+// levelselector.jsx
+
 import React, { useState } from 'react';
 import styles from './LevelSelector.module.scss';
 
@@ -9,6 +11,8 @@ export function LevelSelector({
     toSnakeCase,
     isHighPoly,
     setIsHighPoly,
+    useFarColors,
+    setUseFarColors,
 }) {
     const [expandedHomeworlds, setExpandedHomeworlds] = useState({});
 
@@ -30,13 +34,23 @@ export function LevelSelector({
         <div className={styles.container}>
             <h2 className={styles.title}>Select a Level</h2>
             <div className={styles.controls}>
+                {/* Existing toggle for High/Low poly */}
                 <button
                     className={styles.polyToggle}
                     onClick={() => setIsHighPoly(!isHighPoly)}
                 >
                     {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
                 </button>
+
+                <button
+                    className={styles.polyToggle}
+                    onClick={() => setUseFarColors(!useFarColors)}
+                    disabled={!isHighPoly} // only enabled when high poly is selected
+                >
+                    {useFarColors ? 'Use Vertex Colors' : 'Use Far Colors'}
+                </button>
             </div>
+
             <div className={styles.homeworldsList}>
                 {homeworlds.map((homeworld) => (
                     <div key={homeworld.name}>
@@ -52,7 +66,9 @@ export function LevelSelector({
                         {expandedHomeworlds[homeworld.name] && (
                             <ul className={styles.levelsList}>
                                 <li
-                                    className={`${styles.levelItem} ${currentLevelPath?.includes(toSnakeCase(homeworld.name)) ? styles.active : ''
+                                    className={`${styles.levelItem} ${currentLevelPath?.includes(toSnakeCase(homeworld.name))
+                                        ? styles.active
+                                        : ''
                                         }`}
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -64,7 +80,9 @@ export function LevelSelector({
                                 {homeworld.levels.map((level) => (
                                     <li
                                         key={level.name}
-                                        className={`${styles.levelItem} ${currentLevelPath?.includes(toSnakeCase(level.name)) ? styles.active : ''
+                                        className={`${styles.levelItem} ${currentLevelPath?.includes(toSnakeCase(level.name))
+                                            ? styles.active
+                                            : ''
                                             }`}
                                         onClick={() => handleLevelClick(level.name)}
                                     >

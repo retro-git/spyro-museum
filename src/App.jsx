@@ -1,3 +1,5 @@
+// app.jsx
+
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
@@ -10,10 +12,17 @@ import { LevelSelector } from './components/LevelSelector';
 function LevelViewer() {
   const navigate = useNavigate();
   const location = useLocation();
+
   const [gameData, setGameData] = useState(null);
   const [currentLevelPath, setCurrentLevelPath] = useState(null);
   const [level, setLevel] = useState(null);
+
+  // 1) Toggle for high vs. low poly
   const [isHighPoly, setIsHighPoly] = useState(true);
+
+  // 2) NEW: Toggle between `highfarColors` and `highvertColors`
+  //    Defaults to `true` → `highfarColors` by default
+  const [useFarColors, setUseFarColors] = useState(true);
 
   // Extract the levelPath from the URL
   const levelPath = location.pathname.startsWith('/level/')
@@ -41,7 +50,7 @@ function LevelViewer() {
           // Make sure the levelPath includes both game and level names
           const pathParts = levelPath.split('/');
           if (pathParts.length === 1) {
-            // If only game name is provided, redirect to the first level
+            // If only the game name is provided, redirect to the first level
             const gameName = pathParts[0];
             const firstLevelNameSnake = toSnakeCase(levelsData.homeworlds[0].name);
             const fullPath = `/levels/${gameName}/${firstLevelNameSnake}/sub1`;
@@ -50,7 +59,7 @@ function LevelViewer() {
             console.log('Setting current level path from URL:', levelPath);
             setCurrentLevelPath(`/levels/${levelPath}/sub1`);
           }
-        } else if (!currentLevelPath && !levelPath) { // Only set default if we have neither
+        } else if (!currentLevelPath && !levelPath) {
           // Set default level if no URL path
           console.log('No level path provided, setting default level...');
           const gameName = levelsData.game_name.toLowerCase();
@@ -64,7 +73,8 @@ function LevelViewer() {
     };
 
     fetchLevels();
-  }, [levelPath]); // Remove currentLevelPath from dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [levelPath]);
 
   useEffect(() => {
     if (!currentLevelPath) return;
@@ -95,7 +105,8 @@ function LevelViewer() {
 
   // Utility function to convert names to snake_case
   function toSnakeCase(str) {
-    return str.toLowerCase()
+    return str
+      .toLowerCase()
       .replace(/'s/g, 's')  // Handle possessives
       .replace(/\s+/g, '_'); // Replace spaces with underscores
   }
@@ -108,11 +119,18 @@ function LevelViewer() {
       >
         <OrbitControls />
         <ambientLight intensity={1.3} />
+
         {level &&
           level.partHeaders.map((part, index) => (
-            <PartMesh key={index} part={part.body} isHighPoly={isHighPoly} />
+            <PartMesh
+              key={index}
+              part={part.body}
+              isHighPoly={isHighPoly}
+              useFarColors={useFarColors}
+            />
           ))}
       </Canvas>
+
       {gameData && (
         <LevelSelector
           gameName={gameData.game_name}
@@ -120,15 +138,18 @@ function LevelViewer() {
           currentLevelPath={currentLevelPath}
           setCurrentLevelPath={handleLevelPathChange}
           toSnakeCase={toSnakeCase}
+          // Existing props for poly toggle
           isHighPoly={isHighPoly}
           setIsHighPoly={setIsHighPoly}
+          // NEW: pass the far-colors toggle down
+          useFarColors={useFarColors}
+          setUseFarColors={setUseFarColors}
         />
       )}
     </div>
   );
 }
 
-// Main App component now just handles routing
 function App() {
   return (
     <BrowserRouter>
@@ -140,22 +161,39 @@ function App() {
   );
 }
 
-function PartMesh({ part, isHighPoly }) {
+/**
+ * PartMesh component
+ * This component handles rendering the geometry for a given "part."
+ * It checks whether to use high or low poly, and also whether to use
+ * normal or "far" colors if high poly is active.
+ */
+function PartMesh({ part, isHighPoly, useFarColors }) {
   const geometry = useMemo(() => {
     if (!part) return null;
 
-    // Select vertices, polys, and colors based on poly mode
+    // Select vertices and polys based on high or low poly
     const vertices = isHighPoly ? part.highvertices : part.lowvertices;
     const polys = isHighPoly ? part.highpolys : part.lowpolys;
-    const colors = isHighPoly ? part.highfarColors : part.lowvertColors;
 
-    if (!vertices || !polys) return null;
+    // Decide which color array to use
+    // - For high poly: if "useFarColors" is true, use highfarColors; otherwise use highvertColors
+    // - For low poly: there's only lowvertColors
+    let colors;
+    if (isHighPoly) {
+      colors = useFarColors ? part.highfarColors : part.highvertColors;
+    } else {
+      colors = part.lowvertColors;
+    }
+
+    // Sanity checks
+    if (!vertices || !polys || !colors) return null;
     if (vertices.length === 0 || polys.length === 0) return null;
 
     const newPositions = [];
     const newColors = [];
     const newIndices = [];
 
+    // We'll store a map to handle duplicates of vertex+color combos
     const vertexColorMap = {};
 
     const getUniqueVertexIndex = (vertexIndex, colorIndex) => {
@@ -167,6 +205,7 @@ function PartMesh({ part, isHighPoly }) {
         newPositions.push(originalVertex.x, originalVertex.y, originalVertex.z);
 
         const color = colors[colorIndex];
+        // Example gamma correction or just scale as you like
         newColors.push(
           Math.pow(color.r / 255, 1.5),
           Math.pow(color.g / 255, 1.5),
@@ -189,6 +228,8 @@ function PartMesh({ part, isHighPoly }) {
       const iv3 = getUniqueVertexIndex(v3, c3);
 
       if (isHighPoly) {
+        // If poly.inverseSide is false, we do one winding order
+        // If true, we invert it
         if (!poly.inverseSide) {
           newIndices.push(iv0, iv1, iv3);
           newIndices.push(iv1, iv2, iv3);
@@ -211,7 +252,7 @@ function PartMesh({ part, isHighPoly }) {
     geom.computeVertexNormals();
 
     return geom;
-  }, [part, isHighPoly]);
+  }, [part, isHighPoly, useFarColors]);
 
   if (!geometry) return null;
 

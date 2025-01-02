@@ -105,4 +105,9 @@ $transition-speed: 0.2s;
     &:hover {
         background: #555;
     }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 }
