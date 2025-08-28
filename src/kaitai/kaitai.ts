@@ -27,7 +27,7 @@ const UMD_END_REGEX = /return\s+(\w+)\s*;\s*\}\)\)\s*;\s*[\s\S]*$/;
 /**
  * Utility to run a shell command, printing output to stdout/stderr.
  */
-function runCommand(cmd) {
+function runCommand(cmd: string): number {
   try {
     console.log(`Executing: ${cmd}`);
     execSync(cmd, { stdio: "inherit" });
@@ -43,11 +43,11 @@ function runCommand(cmd) {
  * - Replacing the UMD header with `import KaitaiStream from "kaitai-struct";`
  * - Replacing the final return statement with an `export default ...;`
  */
-function umdToEs6(filePath) {
+function umdToEs6(filePath: string): void {
   const fileContent = fs.readFileSync(filePath, "utf8");
   const result = fileContent
     .replace(UMD_START_REGEX, KAITAI_IMPORT_LINE)
-    .replace(UMD_END_REGEX, (_, identifier) => `export default ${identifier};\n`);
+    .replace(UMD_END_REGEX, (_, identifier: string) => `export default ${identifier};\n`);
 
   fs.writeFileSync(filePath, result, "utf8");
 }
@@ -55,7 +55,7 @@ function umdToEs6(filePath) {
 /**
  * Compiles the KSY into JavaScript, placing the output in PARSERS_DIR.
  */
-function compileKsy(ksyFile) {
+function compileKsy(ksyFile: string): void {
   const cmd = [
     DEFAULT_COMPILER,
     "--target javascript",
@@ -69,9 +69,9 @@ function compileKsy(ksyFile) {
 /**
  * Main entry point
  */
-async function main() {
+async function main(): Promise<void> {
   // Gather all .ksy files from the KSY_DIR
-  const ksyFiles = fs.readdirSync(KSY_DIR).filter((file) => file.endsWith(".ksy"));
+  const ksyFiles = fs.readdirSync(KSY_DIR).filter((file: string) => file.endsWith(".ksy"));
 
   if (ksyFiles.length === 0) {
     console.log("No .ksy files found in:", KSY_DIR);
@@ -104,7 +104,7 @@ async function main() {
 }
 
 // Run
-main().catch((err) => {
+main().catch((err: Error) => {
   console.error(err);
   process.exit(1);
 });

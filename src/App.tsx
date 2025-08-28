@@ -1,4 +1,4 @@
-// app.jsx
+// app.tsx
 
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import React, { useState, useEffect, useMemo } from 'react';
@@ -9,20 +9,47 @@ import { KaitaiStream } from 'kaitai-struct';
 import SpyroLevel from './kaitai/parsers/SpyroLevel';
 import { LevelSelector } from './components/LevelSelector';
 
+// Type definitions
+interface GameData {
+  game_name: string;
+  homeworlds: Array<{
+    name: string;
+    levels: Array<{ name: string }>;
+  }>;
+}
+
+interface PartMeshProps {
+  part: any; // Will be typed based on SpyroLevel structure
+  isHighPoly: boolean;
+  useFarColors: boolean;
+}
+
+interface LevelSelectorProps {
+  gameName: string;
+  homeworlds: Array<{ name: string }>;
+  currentLevelPath: string | null;
+  setCurrentLevelPath: (path: string) => void;
+  toSnakeCase: (str: string) => string;
+  isHighPoly: boolean;
+  setIsHighPoly: (value: boolean) => void;
+  useFarColors: boolean;
+  setUseFarColors: (value: boolean) => void;
+}
+
 function LevelViewer() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [gameData, setGameData] = useState(null);
-  const [currentLevelPath, setCurrentLevelPath] = useState(null);
-  const [level, setLevel] = useState(null);
+  const [gameData, setGameData] = useState<GameData | null>(null);
+  const [currentLevelPath, setCurrentLevelPath] = useState<string | null>(null);
+  const [level, setLevel] = useState<any>(null);
 
   // 1) Toggle for high vs. low poly
-  const [isHighPoly, setIsHighPoly] = useState(true);
+  const [isHighPoly, setIsHighPoly] = useState<boolean>(true);
 
   // 2) NEW: Toggle between `highfarColors` and `highvertColors`
   //    Defaults to `true` → `highfarColors` by default
-  const [useFarColors, setUseFarColors] = useState(true);
+  const [useFarColors, setUseFarColors] = useState<boolean>(true);
 
   // Extract the levelPath from the URL
   const levelPath = location.pathname.startsWith('/level/')
@@ -30,7 +57,7 @@ function LevelViewer() {
     : '';
 
   // Modified handleLevelPathChange to update URL
-  const handleLevelPathChange = (path) => {
+  const handleLevelPathChange = (path: string) => {
     // Remove '/levels/' prefix and '/sub1' suffix for cleaner URLs
     const urlPath = path.replace('/levels/', '').replace('/sub1', '');
     console.log('Navigating to:', urlPath);
@@ -42,7 +69,7 @@ function LevelViewer() {
     const fetchLevels = async () => {
       try {
         const response = await fetch('/levels/levels.json');
-        const levelsData = await response.json();
+        const levelsData: GameData = await response.json();
         setGameData(levelsData);
 
         // If we have a levelPath from URL, use it
@@ -104,7 +131,7 @@ function LevelViewer() {
   }, [currentLevelPath]);
 
   // Utility function to convert names to snake_case
-  function toSnakeCase(str) {
+  function toSnakeCase(str: string): string {
     return str
       .toLowerCase()
       .replace(/'s/g, 's')  // Handle possessives
@@ -121,7 +148,7 @@ function LevelViewer() {
         <ambientLight intensity={1.3} />
 
         {level &&
-          level.partHeaders.map((part, index) => (
+          level.partHeaders.map((part: any, index: number) => (
             <PartMesh
               key={index}
               part={part.body}
@@ -167,7 +194,7 @@ function App() {
  * It checks whether to use high or low poly, and also whether to use
  * normal or "far" colors if high poly is active.
  */
-function PartMesh({ part, isHighPoly, useFarColors }) {
+function PartMesh({ part, isHighPoly, useFarColors }: PartMeshProps) {
   const geometry = useMemo(() => {
     if (!part) return null;
 
@@ -189,14 +216,14 @@ function PartMesh({ part, isHighPoly, useFarColors }) {
     if (!vertices || !polys || !colors) return null;
     if (vertices.length === 0 || polys.length === 0) return null;
 
-    const newPositions = [];
-    const newColors = [];
-    const newIndices = [];
+    const newPositions: number[] = [];
+    const newColors: number[] = [];
+    const newIndices: number[] = [];
 
     // We'll store a map to handle duplicates of vertex+color combos
-    const vertexColorMap = {};
+    const vertexColorMap: Record<string, number> = {};
 
-    const getUniqueVertexIndex = (vertexIndex, colorIndex) => {
+    const getUniqueVertexIndex = (vertexIndex: number, colorIndex: number): number => {
       const key = `${vertexIndex}-${colorIndex}`;
       if (vertexColorMap[key] !== undefined) {
         return vertexColorMap[key];
@@ -218,7 +245,7 @@ function PartMesh({ part, isHighPoly, useFarColors }) {
       }
     };
 
-    polys.forEach((poly) => {
+    polys.forEach((poly: any) => {
       const { v0, v1, v2, v3 } = poly.vert;
       const { c0, c1, c2, c3 } = poly.color;
 

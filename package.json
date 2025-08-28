@@ -8,8 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "kaitai": "node ./src/kaitai/kaitai.js",
-    "dump": "node src/scripts/waddump.js wad.wad public/levels",
+    "kaitai": "tsx ./src/kaitai/kaitai.ts",
+    "dump": "tsx src/scripts/waddump.ts wad.wad public/levels",
     "predeploy": "npm run build",
     "deploy": "vercel --prod"
   },
@@ -27,8 +27,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@types/node": "^24.3.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@types/three": "^0.179.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "eslint": "^9.17.0",
     "eslint-plugin-react": "^7.37.2",
@@ -36,6 +38,8 @@
     "eslint-plugin-react-refresh": "^0.4.16",
     "gh-pages": "^6.2.0",
     "globals": "^15.14.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
     "vite": "^6.0.5"
   }
 }
