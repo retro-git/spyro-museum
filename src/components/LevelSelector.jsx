@@ -1,7 +1,6 @@
 // levelselector.jsx
 
 import React, { useState } from 'react';
-import styles from './LevelSelector.module.scss';
 
 export function LevelSelector({
     gameName,
@@ -31,19 +30,19 @@ export function LevelSelector({
     };
 
     return (
-        <div className={styles.container}>
-            <h2 className={styles.title}>Select a Level</h2>
-            <div className={styles.controls}>
+        <div className="absolute top-2.5 right-2.5 bg-black/80 text-white p-4 rounded-lg w-64 max-h-[90vh] overflow-y-auto z-[1000] backdrop-blur-sm">
+            <h2 className="m-0 mb-4 text-lg text-center border-b border-gray-600 pb-1.5">Select a Level</h2>
+            <div className="my-2.5 px-4">
                 {/* Existing toggle for High/Low poly */}
                 <button
-                    className={styles.polyToggle}
+                    className="w-full p-2 bg-gray-700 text-white border-none rounded cursor-pointer hover:bg-gray-600 transition-colors duration-200 mb-2"
                     onClick={() => setIsHighPoly(!isHighPoly)}
                 >
                     {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
                 </button>
 
                 <button
-                    className={styles.polyToggle}
+                    className="w-full p-2 bg-gray-700 text-white border-none rounded cursor-pointer hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => setUseFarColors(!useFarColors)}
                     disabled={!isHighPoly} // only enabled when high poly is selected
                 >
@@ -51,25 +50,26 @@ export function LevelSelector({
                 </button>
             </div>
 
-            <div className={styles.homeworldsList}>
+            <div className="flex flex-col gap-2">
                 {homeworlds.map((homeworld) => (
                     <div key={homeworld.name}>
                         <div
-                            className={styles.homeworldHeader}
+                            className="flex justify-between items-center px-3 py-2 bg-gray-800 rounded-lg cursor-pointer font-bold transition-colors duration-200 hover:bg-gray-700"
                             onClick={() => toggleHomeworld(homeworld.name)}
                         >
                             {homeworld.name}
-                            <span className={styles.toggleIcon}>
+                            <span className="text-lg leading-none w-5 text-center">
                                 {expandedHomeworlds[homeworld.name] ? '−' : '+'}
                             </span>
                         </div>
                         {expandedHomeworlds[homeworld.name] && (
-                            <ul className={styles.levelsList}>
+                            <ul className="list-none p-0 m-2 mt-0 flex flex-col gap-1">
                                 <li
-                                    className={`${styles.levelItem} ${currentLevelPath?.includes(toSnakeCase(homeworld.name))
-                                        ? styles.active
-                                        : ''
-                                        }`}
+                                    className={`px-3 py-1.5 cursor-pointer bg-gray-700 rounded-lg transition-all duration-200 hover:bg-gray-600 hover:translate-x-1 ${
+                                        currentLevelPath?.includes(toSnakeCase(homeworld.name))
+                                            ? 'bg-gray-600 font-bold'
+                                            : ''
+                                    }`}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         handleLevelClick(homeworld.name);
@@ -80,10 +80,11 @@ export function LevelSelector({
                                 {homeworld.levels.map((level) => (
                                     <li
                                         key={level.name}
-                                        className={`${styles.levelItem} ${currentLevelPath?.includes(toSnakeCase(level.name))
-                                            ? styles.active
-                                            : ''
-                                            }`}
+                                        className={`px-3 py-1.5 cursor-pointer bg-gray-700 rounded-lg transition-all duration-200 hover:bg-gray-600 hover:translate-x-1 ${
+                                            currentLevelPath?.includes(toSnakeCase(level.name))
+                                                ? 'bg-gray-600 font-bold'
+                                                : ''
+                                        }`}
                                         onClick={() => handleLevelClick(level.name)}
                                     >
                                         {level.name}
