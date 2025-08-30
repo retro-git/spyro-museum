@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Separator } from './ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 import { ChevronDown, ChevronRight, Settings } from 'lucide-react';
+import { ModeToggle } from './mode-toggle';
 
 interface Homeworld {
   name: string;
@@ -49,9 +50,12 @@ export function LevelSelector({
       <Card className="bg-card/90 text-card-foreground border-border backdrop-blur-sm">
         <CardContent className="space-y-3 pt-2">
         <CardHeader>
-          <CardTitle className="text-lg text-center text-card-foreground border-b border-border pb-2">
-            Select a Level
-          </CardTitle>
+          <div className="flex items-center justify-between border-b border-border pb-2">
+            <CardTitle className="text-lg text-card-foreground">
+              Select a Level
+            </CardTitle>
+            <ModeToggle />
+          </div>
         </CardHeader>
           {/* Settings Section */}
           <div className="space-y-2">
@@ -80,7 +84,7 @@ export function LevelSelector({
             </Button>
           </div>
 
-          <Separator className="bg-border" />
+
 
           {/* Levels Section */}
           <div className="space-y-2">

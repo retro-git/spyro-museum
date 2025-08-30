@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { KaitaiStream } from 'kaitai-struct';
 import SpyroLevel from './kaitai/parsers/SpyroLevel';
 import { LevelSelector } from './components/LevelSelector';
+import { ThemeProvider } from './components/theme-provider';
 
 // Type definitions
 interface GameData {
@@ -179,12 +180,14 @@ function LevelViewer() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LevelViewer />} />
-        <Route path="/level/*" element={<LevelViewer />} />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LevelViewer />} />
+          <Route path="/level/*" element={<LevelViewer />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
