@@ -46,10 +46,10 @@ export function LevelSelector({
 
   return (
     <div className="absolute top-2.5 right-2.5 w-80 max-h-[90vh] z-[1000]">
-      <Card className="bg-card/90 text-card-foreground border-border backdrop-blur-sm">
+      <Card className="bg-card/90 border-border backdrop-blur-sm">
         <CardContent className="space-y-3 pt-2">
         <CardHeader className="relative">
-          <CardTitle className="text-lg text-center text-card-foreground border-b pb-2">
+          <CardTitle className="text-lg text-center border-b pb-2">
             Select a Level
           </CardTitle>
           <div className="absolute top-0 right-0">
@@ -66,7 +66,7 @@ export function LevelSelector({
             <Button
               variant="default"
               size="sm"
-              className="w-full bg-primary hover:bg-primary/80 text-primary-foreground border-border"
+              className="w-full border-border"
               onClick={() => setIsHighPoly(!isHighPoly)}
             >
               {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
@@ -75,7 +75,7 @@ export function LevelSelector({
             <Button
               variant="default"
               size="sm"
-              className="w-full bg-primary hover:bg-primary/80 text-primary-foreground border-border disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full border-border disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => setUseFarColors(!useFarColors)}
               disabled={!isHighPoly}
             >
@@ -103,7 +103,7 @@ export function LevelSelector({
                     <CollapsibleTrigger asChild>
                       <Button
                         variant="default"
-                        className="w-full justify-between bg-primary hover:bg-primary/80 text-primary-foreground font-semibold h-auto p-3"
+                        className="w-full justify-between font-semibold h-auto p-3"
                       >
                         <span>{homeworld.name}</span>
                         {expandedHomeworlds[homeworld.name] ? (
@@ -119,7 +119,7 @@ export function LevelSelector({
                         <Button
                           variant="default"
                           size="sm"
-                          className={`w-full justify-center bg-primary hover:bg-primary/80 text-primary-foreground h-auto p-2 ${
+                          className={`w-full justify-center h-auto p-2 ${
                             currentLevelPath?.includes(toSnakeCase(homeworld.name))
                               ? 'bg-primary font-semibold'
                               : ''
@@ -137,7 +137,7 @@ export function LevelSelector({
                             key={level.name}
                             variant="default"
                             size="sm"
-                            className={`w-full justify-center bg-primary hover:bg-primary/80 text-primary-foreground h-auto p-2 ${
+                            className={`w-full justify-center h-auto p-2 ${
                               currentLevelPath?.includes(toSnakeCase(level.name))
                                 ? 'bg-primary font-semibold'
                                 : ''
