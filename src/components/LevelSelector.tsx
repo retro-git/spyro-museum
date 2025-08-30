@@ -47,7 +47,14 @@ export function LevelSelector({
   showUploadedLevel,
   setShowUploadedLevel,
 }: LevelSelectorProps) {
-  const [expandedHomeworlds, setExpandedHomeworlds] = useState<Record<string, boolean>>({});
+  const [expandedHomeworlds, setExpandedHomeworlds] = useState<Record<string, boolean>>(() => {
+    // Initialize all homeworlds as collapsed (false) to avoid uncontrolled to controlled switching
+    const initial: Record<string, boolean> = {};
+    homeworlds.forEach(homeworld => {
+      initial[homeworld.name] = false;
+    });
+    return initial;
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLevelClick = (levelName: string) => {
