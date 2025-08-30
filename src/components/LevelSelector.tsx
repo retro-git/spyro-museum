@@ -37,13 +37,6 @@ export function LevelSelector({
 }: LevelSelectorProps) {
   const [expandedHomeworlds, setExpandedHomeworlds] = useState<Record<string, boolean>>({});
 
-  const toggleHomeworld = (name: string) => {
-    setExpandedHomeworlds((prev) => ({
-      ...prev,
-      [name]: !prev[name],
-    }));
-  };
-
   const handleLevelClick = (levelName: string) => {
     const gameNameLower = gameName.toLowerCase();
     const levelNameSnake = toSnakeCase(levelName);
@@ -53,9 +46,9 @@ export function LevelSelector({
 
   return (
     <div className="absolute top-2.5 right-2.5 w-80 max-h-[90vh] z-[1000]">
-      <Card className="bg-black/90 text-white border-gray-700 backdrop-blur-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg text-center text-white border-b border-gray-600 pb-2">
+      <Card className="bg-[oklch(0.208_0.042_265.755)]/90 text-[oklch(0.984_0.003_247.858)] border-[oklch(1_0_0/10%)] backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-lg text-center text-[oklch(0.984_0.003_247.858)] border-b border-[oklch(1_0_0/10%)] pb-2">
             Select a Level
           </CardTitle>
         </CardHeader>
@@ -63,7 +56,7 @@ export function LevelSelector({
         <CardContent className="space-y-3 pt-2">
           {/* Settings Section */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm text-gray-300 mb-2">
+            <div className="flex items-center gap-2 text-sm text-[oklch(0.704_0.04_256.788)] mb-2">
               <Settings className="h-4 w-4" />
               <span>Display Settings</span>
             </div>
@@ -71,7 +64,7 @@ export function LevelSelector({
             <Button
               variant="secondary"
               size="sm"
-              className="w-full bg-gray-700 hover:bg-gray-600 text-white border-gray-600"
+              className="w-full bg-[oklch(0.279_0.041_260.031)] hover:bg-[oklch(0.279_0.041_260.031)]/80 text-[oklch(0.984_0.003_247.858)] border-[oklch(1_0_0/10%)]"
               onClick={() => setIsHighPoly(!isHighPoly)}
             >
               {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
@@ -80,7 +73,7 @@ export function LevelSelector({
             <Button
               variant="secondary"
               size="sm"
-              className="w-full bg-gray-700 hover:bg-gray-600 text-white border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[oklch(0.279_0.041_260.031)] hover:bg-[oklch(0.279_0.041_260.031)]/80 text-[oklch(0.984_0.003_247.858)] border-[oklch(1_0_0/10%)] disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => setUseFarColors(!useFarColors)}
               disabled={!isHighPoly}
             >
@@ -88,7 +81,7 @@ export function LevelSelector({
             </Button>
           </div>
 
-          <Separator className="bg-gray-600" />
+          <Separator className="bg-[oklch(1_0_0/10%)]" />
 
           {/* Levels Section */}
           <div className="space-y-2">
@@ -108,7 +101,7 @@ export function LevelSelector({
                     <CollapsibleTrigger asChild>
                       <Button
                         variant="ghost"
-                        className="w-full justify-between bg-gray-800 hover:bg-gray-700 text-white font-semibold h-auto p-3"
+                        className="w-full justify-between bg-[oklch(0.279_0.041_260.031)] hover:bg-[oklch(0.279_0.041_260.031)]/80 text-[oklch(0.704_0.04_256.788)] font-semibold h-auto p-3"
                       >
                         <span>{homeworld.name}</span>
                         {expandedHomeworlds[homeworld.name] ? (
@@ -124,9 +117,9 @@ export function LevelSelector({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className={`w-full justify-center bg-gray-700 hover:bg-gray-600 text-white h-auto p-2 ${
+                          className={`w-full justify-center bg-[oklch(0.279_0.041_260.031)] hover:bg-[oklch(0.279_0.041_260.031)]/80 text-[oklch(0.984_0.003_247.858)] h-auto p-2 ${
                             currentLevelPath?.includes(toSnakeCase(homeworld.name))
-                              ? 'bg-gray-600 font-semibold'
+                              ? 'bg-[oklch(0.279_0.041_260.031)] font-semibold'
                               : ''
                           }`}
                           onClick={(e) => {
@@ -142,9 +135,9 @@ export function LevelSelector({
                             key={level.name}
                             variant="ghost"
                             size="sm"
-                            className={`w-full justify-center bg-gray-700 hover:bg-gray-600 text-white h-auto p-2 ${
+                            className={`w-full justify-center bg-[oklch(0.279_0.041_260.031)] hover:bg-[oklch(0.279_0.041_260.031)]/80 text-[oklch(0.984_0.003_247.858)] h-auto p-2 ${
                               currentLevelPath?.includes(toSnakeCase(level.name))
-                                ? 'bg-gray-600 font-semibold'
+                                ? 'bg-[oklch(0.279_0.041_260.031)] font-semibold'
                                 : ''
                             }`}
                             onClick={() => handleLevelClick(level.name)}
