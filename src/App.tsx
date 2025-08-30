@@ -52,6 +52,35 @@ function LevelViewer() {
   //    Defaults to `true` → `highfarColors` by default
   const [useFarColors, setUseFarColors] = useState<boolean>(true);
 
+  // NEW: File upload state
+  const [uploadedLevel, setUploadedLevel] = useState<any>(null);
+  const [isCustomLevel, setIsCustomLevel] = useState<boolean>(false);
+  const [uploadStatus, setUploadStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [uploadedFileName, setUploadedFileName] = useState<string>('');
+
+  // Handle file upload and parsing
+  const handleFileUpload = async (file: File) => {
+    setUploadStatus('loading');
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const stream = new KaitaiStream(arrayBuffer);
+      const parsedLevel = new SpyroLevel(stream);
+      
+      setUploadedLevel(parsedLevel);
+      setIsCustomLevel(true);
+      setUploadedFileName(file.name);
+      setUploadStatus('success');
+      // Automatically switch to showing the uploaded level
+      setShowUploadedLevel(true);
+    } catch (error) {
+      console.error('Error parsing uploaded file:', error);
+      setUploadStatus('error');
+    }
+  };
+
+  // Toggle between uploaded level and URL level
+  const [showUploadedLevel, setShowUploadedLevel] = useState<boolean>(false);
+
   // Extract the levelPath from the URL
   const levelPath = location.pathname.startsWith('/level/')
     ? location.pathname.replace('/level/', '')
@@ -64,6 +93,8 @@ function LevelViewer() {
     console.log('Navigating to:', urlPath);
     navigate(`/level/${urlPath}`);
     setCurrentLevelPath(`/levels/${urlPath}/sub1`); // Keep sub1 for actual file path
+    // Automatically switch to showing the URL level
+    setShowUploadedLevel(false);
   };
 
   useEffect(() => {
@@ -105,6 +136,12 @@ function LevelViewer() {
   }, [levelPath]);
 
   useEffect(() => {
+    // If we have an uploaded level and toggle is on, use that instead of fetching
+    if (uploadedLevel && showUploadedLevel) {
+      setLevel(uploadedLevel);
+      return;
+    }
+
     if (!currentLevelPath) return;
 
     const loadLevel = async () => {
@@ -129,7 +166,7 @@ function LevelViewer() {
     };
 
     loadLevel();
-  }, [currentLevelPath]);
+  }, [currentLevelPath, uploadedLevel, showUploadedLevel]);
 
   // Utility function to convert names to snake_case
   function toSnakeCase(str: string): string {
@@ -149,6 +186,7 @@ function LevelViewer() {
         <ambientLight intensity={1.3} />
 
         {level &&
+          level.partHeaders &&
           level.partHeaders.map((part: any, index: number) => (
             <PartMesh
               key={index}
@@ -172,6 +210,13 @@ function LevelViewer() {
           // NEW: pass the far-colors toggle down
           useFarColors={useFarColors}
           setUseFarColors={setUseFarColors}
+          // File upload props
+          onFileUpload={handleFileUpload}
+          uploadStatus={uploadStatus}
+          isCustomLevel={isCustomLevel}
+          // Toggle props
+          showUploadedLevel={showUploadedLevel}
+          setShowUploadedLevel={setShowUploadedLevel}
         />
       )}
     </div>

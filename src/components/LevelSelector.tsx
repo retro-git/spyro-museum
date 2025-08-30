@@ -1,10 +1,10 @@
 // levelselector.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
-import { ChevronDown, ChevronRight, Settings } from 'lucide-react';
+import { ChevronDown, ChevronRight, Settings, Upload, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 import { ModeToggle } from './mode-toggle';
 
 interface Homeworld {
@@ -22,6 +22,12 @@ interface LevelSelectorProps {
   setIsHighPoly: (value: boolean) => void;
   useFarColors: boolean;
   setUseFarColors: (value: boolean) => void;
+  onFileUpload: (file: File) => void;
+  uploadStatus: 'idle' | 'loading' | 'success' | 'error';
+  isCustomLevel: boolean;
+  uploadedFileName?: string;
+  showUploadedLevel: boolean;
+  setShowUploadedLevel: (value: boolean) => void;
 }
 
 export function LevelSelector({
@@ -34,8 +40,15 @@ export function LevelSelector({
   setIsHighPoly,
   useFarColors,
   setUseFarColors,
+  onFileUpload,
+  uploadStatus,
+  isCustomLevel,
+  uploadedFileName,
+  showUploadedLevel,
+  setShowUploadedLevel,
 }: LevelSelectorProps) {
   const [expandedHomeworlds, setExpandedHomeworlds] = useState<Record<string, boolean>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLevelClick = (levelName: string) => {
     const gameNameLower = gameName.toLowerCase();
@@ -44,12 +57,53 @@ export function LevelSelector({
     setCurrentLevelPath(path);
   };
 
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onFileUpload(file);
+    }
+    // Reset the input value so the same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
   const getLevelButtonClassName = (levelName: string) => {
     return `w-full justify-center h-auto p-2 ${
       currentLevelPath?.includes(toSnakeCase(levelName))
         ? 'bg-primary font-semibold'
         : ''
     }`;
+  };
+
+  const getUploadStatusIcon = () => {
+    switch (uploadStatus) {
+      case 'loading':
+        return <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>;
+      case 'success':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'error':
+        return <AlertCircle className="h-4 w-4 text-red-500" />;
+      default:
+        return <Upload className="h-4 w-4" />;
+    }
+  };
+
+  const getUploadStatusText = () => {
+    switch (uploadStatus) {
+      case 'loading':
+        return 'Parsing file...';
+      case 'success':
+        return 'File loaded successfully!';
+      case 'error':
+        return 'Failed to parse file';
+      default:
+        return 'Upload Level File';
+    }
   };
 
   return (
@@ -64,6 +118,61 @@ export function LevelSelector({
             <ModeToggle />
           </div>
         </CardHeader>
+
+          {/* File Upload Section */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+              <FileText className="h-4 w-4" />
+              <span>Custom Level</span>
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full border-border hover:bg-accent"
+              onClick={triggerFileInput}
+              disabled={uploadStatus === 'loading'}
+            >
+              {getUploadStatusIcon()}
+              <span className="ml-2">{getUploadStatusText()}</span>
+            </Button>
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+
+            {/* Upload status and toggle */}
+            {uploadStatus === 'error' && (
+              <div className="text-xs text-red-500 text-center p-2 bg-red-500/10 rounded-md border border-red-500/20">
+                <div className="font-medium mb-1">Failed to parse file</div>
+                <div>Please ensure the file is a valid Spyro level format</div>
+                <div className="text-xs mt-1">Max file size: 10MB</div>
+              </div>
+            )}
+
+            {/* Toggle between uploaded and URL level */}
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full border-border"
+                onClick={() => setShowUploadedLevel(!showUploadedLevel)}
+                disabled={!isCustomLevel}
+              >
+                {showUploadedLevel ? 'Show URL Level' : 'Show Uploaded Level'}
+              </Button>
+              {isCustomLevel && uploadedFileName && (
+                <div className="text-xs text-muted-foreground text-center truncate">
+                  {uploadedFileName}
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Settings Section */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
@@ -91,10 +200,11 @@ export function LevelSelector({
             </Button>
           </div>
 
-
-
           {/* Levels Section */}
           <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+              <span>Predefined Levels</span>
+            </div>
             <div className="h-[50vh] overflow-y-auto">
               <div className="space-y-2">
                 {homeworlds.map((homeworld) => (
