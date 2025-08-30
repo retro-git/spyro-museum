@@ -64,7 +64,7 @@ export function LevelSelector({
             </div>
             
             <Button
-              variant="default"
+              variant="outline"
               size="sm"
               className="w-full border-border"
               onClick={() => setIsHighPoly(!isHighPoly)}
@@ -73,7 +73,7 @@ export function LevelSelector({
             </Button>
 
             <Button
-              variant="default"
+              variant="outline"
               size="sm"
               className="w-full border-border disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => setUseFarColors(!useFarColors)}
@@ -102,7 +102,7 @@ export function LevelSelector({
                   >
                     <CollapsibleTrigger asChild>
                       <Button
-                        variant="default"
+                        variant="outline"
                         className="w-full justify-between font-semibold h-auto p-3"
                       >
                         <span>{homeworld.name}</span>
@@ -117,7 +117,7 @@ export function LevelSelector({
                     <CollapsibleContent className="space-y-1 mt-2">
                       <div className="space-y-1">
                         <Button
-                          variant="default"
+                          variant="outline"
                           size="sm"
                           className={`w-full justify-center h-auto p-2 ${
                             currentLevelPath?.includes(toSnakeCase(homeworld.name))
@@ -135,7 +135,7 @@ export function LevelSelector({
                         {homeworld.levels.map((level) => (
                           <Button
                             key={level.name}
-                            variant="default"
+                            variant="outline"
                             size="sm"
                             className={`w-full justify-center h-auto p-2 ${
                               currentLevelPath?.includes(toSnakeCase(level.name))
