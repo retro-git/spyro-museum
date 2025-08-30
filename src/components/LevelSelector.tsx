@@ -47,13 +47,12 @@ export function LevelSelector({
   return (
     <div className="absolute top-2.5 right-2.5 w-80 max-h-[90vh] z-[1000]">
       <Card className="bg-[oklch(0.208_0.042_265.755)]/90 text-[oklch(0.984_0.003_247.858)] border-[oklch(1_0_0/10%)] backdrop-blur-sm">
+        <CardContent className="space-y-3 pt-2">
         <CardHeader>
           <CardTitle className="text-lg text-center text-[oklch(0.984_0.003_247.858)] border-b border-[oklch(1_0_0/10%)] pb-2">
             Select a Level
           </CardTitle>
         </CardHeader>
-        
-        <CardContent className="space-y-3 pt-2">
           {/* Settings Section */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-[oklch(0.704_0.04_256.788)] mb-2">
@@ -85,7 +84,7 @@ export function LevelSelector({
 
           {/* Levels Section */}
           <div className="space-y-2">
-            <div className="h-[60vh] overflow-y-auto pr-4">
+            <div className="h-[60vh] overflow-y-auto">
               <div className="space-y-2">
                 {homeworlds.map((homeworld) => (
                   <Collapsible
@@ -113,7 +112,7 @@ export function LevelSelector({
                     </CollapsibleTrigger>
                     
                     <CollapsibleContent className="space-y-1 mt-2">
-                      <div className="flex flex-col items-center space-y-1">
+                      <div className="space-y-1">
                         <Button
                           variant="ghost"
                           size="sm"
