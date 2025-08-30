@@ -46,7 +46,7 @@ export function LevelSelector({
 
   return (
     <div className="absolute top-2.5 right-2.5 w-80 max-h-[90vh] z-[1000]">
-      <Card className="bg-card/90 border-border backdrop-blur-sm">
+      <Card className="bg-card/90 border-border backdrop-blur-none">
         <CardContent className="space-y-3 pt-2">
         <CardHeader className="relative">
           <CardTitle className="text-lg text-center border-b pb-2">
