@@ -1,11 +1,11 @@
 // levelselector.tsx
 
 import React, { useState, useRef } from 'react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronRight, Settings, Upload, FileText, AlertCircle, CheckCircle } from 'lucide-react';
-import { ModeToggle } from './mode-toggle';
+import { ModeToggle } from '@/components/mode-toggle';
 
 interface Homeworld {
   name: string;

@@ -6,9 +6,9 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { KaitaiStream } from 'kaitai-struct';
-import SpyroLevel from './kaitai/parsers/SpyroLevel';
-import { LevelSelector } from './components/LevelSelector';
-import { ThemeProvider } from './components/theme-provider';
+import SpyroLevel from '@/kaitai/parsers/SpyroLevel';
+import { LevelSelector } from '@/components/LevelSelector';
+import { ThemeProvider } from '@/components/theme-provider';
 
 // Type definitions
 interface GameData {
