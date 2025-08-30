@@ -29,13 +29,15 @@ export function CustomCameraControls({
 
   // Initialize rotation to match camera's current orientation
   useEffect(() => {
+    if (isInitialized.current) return; // Prevent re-initialization
+    
     const forward = new THREE.Vector3(0, 0, -1);
     forward.applyQuaternion(camera.quaternion);
     
     rotation.current.y = Math.atan2(forward.x, forward.z);
     rotation.current.x = Math.asin(-forward.y);
     isInitialized.current = true;
-  }, [camera]);
+  }, []); // Empty dependency array - only run once on mount
 
   // Function to request pointer lock
   const requestPointerLock = () => {
