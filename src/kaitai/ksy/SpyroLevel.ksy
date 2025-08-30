@@ -168,31 +168,25 @@ types:
 
   low_vert:
     seq:
-      - id: raw
-        type: u4
-    instances:
-      v0:
-        value: (raw >> 8) & 0x3f
-      v1:
-        value: (raw >> 14) & 0x3f
-      v2:
-        value: (raw >> 20) & 0x3f
-      v3:
-        value: (raw >> 26) & 0x3f
+      - id: v0
+        type: u1
+      - id: v1
+        type: u1
+      - id: v2
+        type: u1
+      - id: v3
+        type: u1
 
   low_color:
     seq:
-      - id: raw
-        type: u4
-    instances:
-      c0:
-        value: (raw >> 8) & 0x3f
-      c1:
-        value: (raw >> 14) & 0x3f
-      c2:
-        value: (raw >> 20) & 0x3f
-      c3:
-        value: (raw >> 26) & 0x3f
+      - id: c0
+        type: u1
+      - id: c1
+        type: u1
+      - id: c2
+        type: u1
+      - id: c3
+        type: u1
 
   # read_highpoly -> read_highvert + read_highcolor + skip 8
   high_poly:
@@ -237,28 +231,22 @@ types:
 
   high_vert:
     seq:
-      - id: raw
-        type: u4
-    instances:
-      v0:
-        value: (raw      ) & 0xff
-      v1:
-        value: (raw >> 8 ) & 0xff
-      v2:
-        value: (raw >> 16) & 0xff
-      v3:
-        value: (raw >> 24) & 0xff
+      - id: v0
+        type: u1
+      - id: v1
+        type: u1
+      - id: v2
+        type: u1
+      - id: v3
+        type: u1
 
   high_color:
     seq:
-      - id: raw
-        type: u4
-    instances:
-      c0:
-        value: (raw      ) & 0xff
-      c1:
-        value: (raw >> 8 ) & 0xff
-      c2:
-        value: (raw >> 16) & 0xff
-      c3:
-        value: (raw >> 24) & 0xff
+      - id: c0
+        type: u1
+      - id: c1
+        type: u1
+      - id: c2
+        type: u1
+      - id: c3
+        type: u1

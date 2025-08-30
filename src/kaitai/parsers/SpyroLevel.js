@@ -63,40 +63,11 @@ var SpyroLevel = (function() {
       this._read();
     }
     LowVert.prototype._read = function() {
-      this.raw = this._io.readU4le();
+      this.v0 = this._io.readU1();
+      this.v1 = this._io.readU1();
+      this.v2 = this._io.readU1();
+      this.v3 = this._io.readU1();
     }
-    Object.defineProperty(LowVert.prototype, 'v0', {
-      get: function() {
-        if (this._m_v0 !== undefined)
-          return this._m_v0;
-        this._m_v0 = ((this.raw >>> 8) & 63);
-        return this._m_v0;
-      }
-    });
-    Object.defineProperty(LowVert.prototype, 'v1', {
-      get: function() {
-        if (this._m_v1 !== undefined)
-          return this._m_v1;
-        this._m_v1 = ((this.raw >>> 14) & 63);
-        return this._m_v1;
-      }
-    });
-    Object.defineProperty(LowVert.prototype, 'v2', {
-      get: function() {
-        if (this._m_v2 !== undefined)
-          return this._m_v2;
-        this._m_v2 = ((this.raw >>> 20) & 63);
-        return this._m_v2;
-      }
-    });
-    Object.defineProperty(LowVert.prototype, 'v3', {
-      get: function() {
-        if (this._m_v3 !== undefined)
-          return this._m_v3;
-        this._m_v3 = ((this.raw >>> 26) & 63);
-        return this._m_v3;
-      }
-    });
 
     return LowVert;
   })();
@@ -255,40 +226,11 @@ var SpyroLevel = (function() {
       this._read();
     }
     LowColor.prototype._read = function() {
-      this.raw = this._io.readU4le();
+      this.c0 = this._io.readU1();
+      this.c1 = this._io.readU1();
+      this.c2 = this._io.readU1();
+      this.c3 = this._io.readU1();
     }
-    Object.defineProperty(LowColor.prototype, 'c0', {
-      get: function() {
-        if (this._m_c0 !== undefined)
-          return this._m_c0;
-        this._m_c0 = ((this.raw >>> 8) & 63);
-        return this._m_c0;
-      }
-    });
-    Object.defineProperty(LowColor.prototype, 'c1', {
-      get: function() {
-        if (this._m_c1 !== undefined)
-          return this._m_c1;
-        this._m_c1 = ((this.raw >>> 14) & 63);
-        return this._m_c1;
-      }
-    });
-    Object.defineProperty(LowColor.prototype, 'c2', {
-      get: function() {
-        if (this._m_c2 !== undefined)
-          return this._m_c2;
-        this._m_c2 = ((this.raw >>> 20) & 63);
-        return this._m_c2;
-      }
-    });
-    Object.defineProperty(LowColor.prototype, 'c3', {
-      get: function() {
-        if (this._m_c3 !== undefined)
-          return this._m_c3;
-        this._m_c3 = ((this.raw >>> 26) & 63);
-        return this._m_c3;
-      }
-    });
 
     return LowColor;
   })();
@@ -302,40 +244,11 @@ var SpyroLevel = (function() {
       this._read();
     }
     HighColor.prototype._read = function() {
-      this.raw = this._io.readU4le();
+      this.c0 = this._io.readU1();
+      this.c1 = this._io.readU1();
+      this.c2 = this._io.readU1();
+      this.c3 = this._io.readU1();
     }
-    Object.defineProperty(HighColor.prototype, 'c0', {
-      get: function() {
-        if (this._m_c0 !== undefined)
-          return this._m_c0;
-        this._m_c0 = (this.raw & 255);
-        return this._m_c0;
-      }
-    });
-    Object.defineProperty(HighColor.prototype, 'c1', {
-      get: function() {
-        if (this._m_c1 !== undefined)
-          return this._m_c1;
-        this._m_c1 = ((this.raw >>> 8) & 255);
-        return this._m_c1;
-      }
-    });
-    Object.defineProperty(HighColor.prototype, 'c2', {
-      get: function() {
-        if (this._m_c2 !== undefined)
-          return this._m_c2;
-        this._m_c2 = ((this.raw >>> 16) & 255);
-        return this._m_c2;
-      }
-    });
-    Object.defineProperty(HighColor.prototype, 'c3', {
-      get: function() {
-        if (this._m_c3 !== undefined)
-          return this._m_c3;
-        this._m_c3 = ((this.raw >>> 24) & 255);
-        return this._m_c3;
-      }
-    });
 
     return HighColor;
   })();
@@ -349,40 +262,11 @@ var SpyroLevel = (function() {
       this._read();
     }
     HighVert.prototype._read = function() {
-      this.raw = this._io.readU4le();
+      this.v0 = this._io.readU1();
+      this.v1 = this._io.readU1();
+      this.v2 = this._io.readU1();
+      this.v3 = this._io.readU1();
     }
-    Object.defineProperty(HighVert.prototype, 'v0', {
-      get: function() {
-        if (this._m_v0 !== undefined)
-          return this._m_v0;
-        this._m_v0 = (this.raw & 255);
-        return this._m_v0;
-      }
-    });
-    Object.defineProperty(HighVert.prototype, 'v1', {
-      get: function() {
-        if (this._m_v1 !== undefined)
-          return this._m_v1;
-        this._m_v1 = ((this.raw >>> 8) & 255);
-        return this._m_v1;
-      }
-    });
-    Object.defineProperty(HighVert.prototype, 'v2', {
-      get: function() {
-        if (this._m_v2 !== undefined)
-          return this._m_v2;
-        this._m_v2 = ((this.raw >>> 16) & 255);
-        return this._m_v2;
-      }
-    });
-    Object.defineProperty(HighVert.prototype, 'v3', {
-      get: function() {
-        if (this._m_v3 !== undefined)
-          return this._m_v3;
-        this._m_v3 = ((this.raw >>> 24) & 255);
-        return this._m_v3;
-      }
-    });
 
     return HighVert;
   })();
