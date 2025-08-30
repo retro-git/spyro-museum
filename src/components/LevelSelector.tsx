@@ -1,6 +1,11 @@
 // levelselector.tsx
 
 import React, { useState } from 'react';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Separator } from './ui/separator';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import { ChevronDown, ChevronRight, Settings } from 'lucide-react';
 
 interface Homeworld {
   name: string;
@@ -47,71 +52,115 @@ export function LevelSelector({
   };
 
   return (
-    <div className="absolute top-2.5 right-2.5 bg-black/80 text-white p-4 rounded-lg w-64 max-h-[90vh] overflow-y-auto z-[1000] backdrop-blur-sm">
-      <h2 className="m-0 mb-4 text-lg text-center border-b border-gray-600 pb-1.5">Select a Level</h2>
-      <div className="my-2.5 px-4">
-        {/* Existing toggle for High/Low poly */}
-        <button
-          className="w-full p-2 bg-gray-700 text-white border-none rounded cursor-pointer hover:bg-gray-600 transition-colors duration-200 mb-2"
-          onClick={() => setIsHighPoly(!isHighPoly)}
-        >
-          {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
-        </button>
-
-        <button
-          className="w-full p-2 bg-gray-700 text-white border-none rounded cursor-pointer hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={() => setUseFarColors(!useFarColors)}
-          disabled={!isHighPoly} // only enabled when high poly is selected
-        >
-          {useFarColors ? 'Use Vertex Colors' : 'Use Far Colors'}
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        {homeworlds.map((homeworld) => (
-          <div key={homeworld.name}>
-            <div
-              className="flex justify-between items-center px-3 py-2 bg-gray-800 rounded-lg cursor-pointer font-bold transition-colors duration-200 hover:bg-gray-700"
-              onClick={() => toggleHomeworld(homeworld.name)}
-            >
-              {homeworld.name}
-              <span className="text-lg leading-none w-5 text-center">
-                {expandedHomeworlds[homeworld.name] ? '−' : '+'}
-              </span>
+    <div className="absolute top-2.5 right-2.5 w-80 max-h-[90vh] z-[1000]">
+      <Card className="bg-black/90 text-white border-gray-700 backdrop-blur-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg text-center text-white border-b border-gray-600 pb-2">
+            Select a Level
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent className="space-y-3 pt-2">
+          {/* Settings Section */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-gray-300 mb-2">
+              <Settings className="h-4 w-4" />
+              <span>Display Settings</span>
             </div>
-            {expandedHomeworlds[homeworld.name] && (
-              <ul className="list-none p-0 m-2 mt-0 flex flex-col gap-1">
-                <li
-                  className={`px-3 py-1.5 cursor-pointer bg-gray-700 rounded-lg transition-all duration-200 hover:bg-gray-600 hover:translate-x-1 ${
-                    currentLevelPath?.includes(toSnakeCase(homeworld.name))
-                      ? 'bg-gray-600 font-bold'
-                      : ''
-                  }`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleLevelClick(homeworld.name);
-                  }}
-                >
-                  Homeworld
-                </li>
-                {homeworld.levels.map((level) => (
-                  <li
-                    key={level.name}
-                    className={`px-3 py-1.5 cursor-pointer bg-gray-700 rounded-lg transition-all duration-200 hover:bg-gray-600 hover:translate-x-1 ${
-                      currentLevelPath?.includes(toSnakeCase(level.name))
-                        ? 'bg-gray-600 font-bold'
-                        : ''
-                    }`}
-                    onClick={() => handleLevelClick(level.name)}
-                  >
-                    {level.name}
-                  </li>
-                ))}
-              </ul>
-            )}
+            
+            <Button
+              variant="secondary"
+              size="sm"
+              className="w-full bg-gray-700 hover:bg-gray-600 text-white border-gray-600"
+              onClick={() => setIsHighPoly(!isHighPoly)}
+            >
+              {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
+            </Button>
+
+            <Button
+              variant="secondary"
+              size="sm"
+              className="w-full bg-gray-700 hover:bg-gray-600 text-white border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => setUseFarColors(!useFarColors)}
+              disabled={!isHighPoly}
+            >
+              {useFarColors ? 'Use Vertex Colors' : 'Use Far Colors'}
+            </Button>
           </div>
-        ))}
-      </div>
+
+          <Separator className="bg-gray-600" />
+
+          {/* Levels Section */}
+          <div className="space-y-2">
+            <div className="h-[60vh] overflow-y-auto pr-4">
+              <div className="space-y-2">
+                {homeworlds.map((homeworld) => (
+                  <Collapsible
+                    key={homeworld.name}
+                    open={expandedHomeworlds[homeworld.name]}
+                    onOpenChange={(open) => 
+                      setExpandedHomeworlds((prev) => ({
+                        ...prev,
+                        [homeworld.name]: open,
+                      }))
+                    }
+                  >
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-between bg-gray-800 hover:bg-gray-700 text-white font-semibold h-auto p-3"
+                      >
+                        <span>{homeworld.name}</span>
+                        {expandedHomeworlds[homeworld.name] ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                    
+                    <CollapsibleContent className="space-y-1 mt-2">
+                      <div className="flex flex-col items-center space-y-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`w-full justify-center bg-gray-700 hover:bg-gray-600 text-white h-auto p-2 ${
+                            currentLevelPath?.includes(toSnakeCase(homeworld.name))
+                              ? 'bg-gray-600 font-semibold'
+                              : ''
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLevelClick(homeworld.name);
+                          }}
+                        >
+                          Homeworld
+                        </Button>
+                        
+                        {homeworld.levels.map((level) => (
+                          <Button
+                            key={level.name}
+                            variant="ghost"
+                            size="sm"
+                            className={`w-full justify-center bg-gray-700 hover:bg-gray-600 text-white h-auto p-2 ${
+                              currentLevelPath?.includes(toSnakeCase(level.name))
+                                ? 'bg-gray-600 font-semibold'
+                                : ''
+                            }`}
+                            onClick={() => handleLevelClick(level.name)}
+                          >
+                            {level.name}
+                          </Button>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                ))}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
