@@ -98,7 +98,7 @@ export function LevelSelector({
       case 'loading':
         return 'Parsing file...';
       case 'success':
-        return 'File loaded successfully!';
+        return 'File loaded!';
       case 'error':
         return 'Failed to parse file';
       default:
@@ -126,16 +126,30 @@ export function LevelSelector({
               <span>Custom Level</span>
             </div>
             
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full border-border hover:bg-accent"
-              onClick={triggerFileInput}
-              disabled={uploadStatus === 'loading'}
-            >
-              {getUploadStatusIcon()}
-              <span className="ml-2">{getUploadStatusText()}</span>
-            </Button>
+            <div className="flex gap-2 min-w-0">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-[7] border-border hover:bg-accent min-w-0"
+                onClick={triggerFileInput}
+                disabled={uploadStatus === 'loading'}
+              >
+                <div className="flex items-center min-w-0">
+                  {getUploadStatusIcon()}
+                  <span className="ml-2 truncate">{getUploadStatusText()}</span>
+                </div>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-[3] border-border min-w-0"
+                onClick={() => setShowUploadedLevel(!showUploadedLevel)}
+                disabled={!isCustomLevel}
+              >
+                <span className="truncate">{showUploadedLevel ? 'URL' : 'Uploaded'}</span>
+              </Button>
+            </div>
 
             {/* Hidden file input */}
             <input
@@ -155,22 +169,11 @@ export function LevelSelector({
             )}
 
             {/* Toggle between uploaded and URL level */}
-            <div className="space-y-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full border-border"
-                onClick={() => setShowUploadedLevel(!showUploadedLevel)}
-                disabled={!isCustomLevel}
-              >
-                {showUploadedLevel ? 'Show URL Level' : 'Show Uploaded Level'}
-              </Button>
-              {isCustomLevel && uploadedFileName && (
-                <div className="text-xs text-muted-foreground text-center truncate">
-                  {uploadedFileName}
-                </div>
-              )}
-            </div>
+            {isCustomLevel && uploadedFileName && (
+              <div className="text-xs text-muted-foreground text-center truncate">
+                {uploadedFileName}
+              </div>
+            )}
           </div>
 
           {/* Settings Section */}
@@ -180,24 +183,26 @@ export function LevelSelector({
               <span>Display Settings</span>
             </div>
             
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full border-border"
-              onClick={() => setIsHighPoly(!isHighPoly)}
-            >
-              {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
-            </Button>
+            <div className="flex gap-2 min-w-0">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 border-border min-w-0"
+                onClick={() => setIsHighPoly(!isHighPoly)}
+              >
+                <span className="truncate">{isHighPoly ? 'Low Poly' : 'High Poly'}</span>
+              </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full border-border disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => setUseFarColors(!useFarColors)}
-              disabled={!isHighPoly}
-            >
-              {useFarColors ? 'Use Vertex Colors' : 'Use Far Colors'}
-            </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 border-border disabled:opacity-50 disabled:cursor-not-allowed min-w-0"
+                onClick={() => setUseFarColors(!useFarColors)}
+                disabled={!isHighPoly}
+              >
+                <span className="truncate">{useFarColors ? 'Vertex' : 'Far'}</span>
+              </Button>
+            </div>
           </div>
 
           {/* Levels Section */}
