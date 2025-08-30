@@ -3,7 +3,7 @@
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { CustomCameraControls } from '@/components/CustomCameraControls';
 import * as THREE from 'three';
 import { KaitaiStream } from 'kaitai-struct';
 import SpyroLevel from '@/kaitai/parsers/SpyroLevel';
@@ -180,9 +180,16 @@ function LevelViewer() {
     <div className="container">
       <Canvas
         style={{ width: '100vw', height: '100vh', background: '#222' }}
-        camera={{ position: [0, 5, 15], fov: 60 }}
+        camera={{ 
+          position: [0, 5, 15], 
+          fov: 60,
+          rotation: [0, Math.PI, 0] // Initial rotation: [x, y, z] in radians
+        }}
       >
-        <OrbitControls />
+        <CustomCameraControls
+          movementSpeed={3}
+          lookSpeed={0.01}
+        />
         <ambientLight intensity={1.3} />
 
         {level &&
