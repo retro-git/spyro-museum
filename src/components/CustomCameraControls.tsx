@@ -19,6 +19,7 @@ export function CustomCameraControls({
   const [isMovingBackward, setIsMovingBackward] = useState(false);
   const [isMovingLeft, setIsMovingLeft] = useState(false);
   const [isMovingRight, setIsMovingRight] = useState(false);
+  const [isPointerLocked, setIsPointerLocked] = useState(false);
   
   const lastMousePos = useRef({ x: 0, y: 0 });
   const rotation = useRef({ x: 0, y: 0 });
@@ -35,6 +36,67 @@ export function CustomCameraControls({
     rotation.current.x = Math.asin(-forward.y);
     isInitialized.current = true;
   }, [camera]);
+
+  // Function to request pointer lock
+  const requestPointerLock = () => {
+    const canvas = gl.domElement;
+    if (canvas.requestPointerLock) {
+      canvas.requestPointerLock();
+    } else if ((canvas as any).mozRequestPointerLock) {
+      (canvas as any).mozRequestPointerLock();
+    } else if ((canvas as any).webkitRequestPointerLock) {
+      (canvas as any).webkitRequestPointerLock();
+    }
+  };
+
+  // Function to exit pointer lock
+  const exitPointerLock = () => {
+    if (document.exitPointerLock) {
+      document.exitPointerLock();
+    } else if ((document as any).mozExitPointerLock) {
+      (document as any).mozExitPointerLock();
+    } else if ((document as any).webkitExitPointerLock) {
+      (document as any).webkitExitPointerLock();
+    }
+  };
+
+  // Handle pointer lock state changes
+  useEffect(() => {
+    const handlePointerLockChange = () => {
+      const isLocked = !!(document.pointerLockElement || 
+                          (document as any).mozPointerLockElement || 
+                          (document as any).webkitPointerLockElement);
+      setIsPointerLocked(isLocked);
+      
+      if (!isLocked && isDragging) {
+        setIsDragging(false);
+      }
+    };
+
+    const handlePointerLockError = (e: Event) => {
+      console.error('Pointer lock failed:', e);
+      setIsPointerLocked(false);
+      setIsDragging(false);
+    };
+
+    document.addEventListener('pointerlockchange', handlePointerLockChange);
+    document.addEventListener('mozpointerlockchange', handlePointerLockChange);
+    document.addEventListener('webkitpointerlockchange', handlePointerLockChange);
+    
+    document.addEventListener('pointerlockerror', handlePointerLockError);
+    document.addEventListener('mozpointerlockerror', handlePointerLockError);
+    document.addEventListener('webkitpointerlockerror', handlePointerLockError);
+
+    return () => {
+      document.removeEventListener('pointerlockchange', handlePointerLockChange);
+      document.removeEventListener('mozpointerlockchange', handlePointerLockChange);
+      document.removeEventListener('webkitpointerlockchange', handlePointerLockChange);
+      
+      document.removeEventListener('pointerlockerror', handlePointerLockError);
+      document.removeEventListener('mozpointerlockerror', handlePointerLockError);
+      document.removeEventListener('webkitpointerlockerror', handlePointerLockError);
+    };
+  }, [isDragging]);
 
   // Handle keyboard input
   useEffect(() => {
@@ -53,6 +115,12 @@ export function CustomCameraControls({
           break;
         case 'KeyD':
           setIsMovingRight(true);
+          break;
+        case 'Escape':
+          // Exit pointer lock when Escape is pressed
+          if (isPointerLocked) {
+            exitPointerLock();
+          }
           break;
       }
     };
@@ -83,7 +151,7 @@ export function CustomCameraControls({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, []);
+  }, [isPointerLocked]);
 
   // Handle mouse input
   useEffect(() => {
@@ -91,34 +159,35 @@ export function CustomCameraControls({
     console.log('Setting up mouse events on canvas:', canvas);
     
     const handleMouseDown = (e: MouseEvent) => {
-      if (e.button === 0) { // Left mouse button only
-        console.log('Mouse down - starting drag');
+      if (e.button === 0 && !isPointerLocked) { // Left mouse button only, and not already locked
+        console.log('Mouse down - requesting pointer lock');
         setIsDragging(true);
-        lastMousePos.current = { x: e.clientX, y: e.clientY };
-        canvas.style.cursor = 'none';
+        requestPointerLock();
+        e.preventDefault();
       }
     };
-    
+
     const handleMouseUp = (e: MouseEvent) => {
-      if (e.button === 0) {
-        console.log('Mouse up - stopping drag');
+      if (e.button === 0 && isPointerLocked) {
+        console.log('Mouse up - exiting pointer lock');
         setIsDragging(false);
-        canvas.style.cursor = 'default';
+        exitPointerLock();
       }
     };
-    
+
     const handleMouseLeave = () => {
-      console.log('Mouse leave - stopping drag');
-      setIsDragging(false);
-      canvas.style.cursor = 'default';
+      if (isPointerLocked) {
+        console.log('Mouse leave - exiting pointer lock');
+        setIsDragging(false);
+        exitPointerLock();
+      }
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      console.log('Mouse move event, isDragging:', isDragging, 'deltaX:', e.clientX - lastMousePos.current.x, 'deltaY:', e.clientY - lastMousePos.current.y);
-      
-      if (isDragging) {
-        const deltaX = e.clientX - lastMousePos.current.x;
-        const deltaY = e.clientY - lastMousePos.current.y;
+      if (isPointerLocked && isDragging) {
+        // Use movementX and movementY for pointer lock mode
+        const deltaX = e.movementX || 0;
+        const deltaY = e.movementY || 0;
         
         // Update rotation based on mouse movement
         rotation.current.y -= deltaX * lookSpeed;
@@ -129,25 +198,33 @@ export function CustomCameraControls({
         
         console.log('Mouse move - rotation updated to:', rotation.current);
         console.log('Camera rotation before update:', camera.rotation);
-        
-        // Update last mouse position
-        lastMousePos.current = { x: e.clientX, y: e.clientY };
       }
+    };
+
+    // Add context menu prevention
+    const handleContextMenu = (e: Event) => {
+      e.preventDefault();
     };
 
     canvas.addEventListener('mousedown', handleMouseDown);
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseLeave);
     canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('contextmenu', handleContextMenu);
 
     return () => {
       canvas.removeEventListener('mousedown', handleMouseDown);
       canvas.removeEventListener('mouseup', handleMouseUp);
       canvas.removeEventListener('mouseleave', handleMouseLeave);
       canvas.removeEventListener('mousemove', handleMouseMove);
-      canvas.style.cursor = 'default';
+      canvas.removeEventListener('contextmenu', handleContextMenu);
+      
+      // Exit pointer lock when component unmounts
+      if (isPointerLocked) {
+        exitPointerLock();
+      }
     };
-  }, [gl, lookSpeed, isDragging]);
+  }, [gl, lookSpeed, isDragging, isPointerLocked]);
 
   // Update camera position and rotation every frame
   useFrame((state, delta) => {
@@ -175,13 +252,6 @@ export function CustomCameraControls({
     
     // Ensure the camera's up vector matches our desired up vector
     camera.up.copy(upVector);
-
-    // Debug: log camera rotation every few frames
-    if (Math.random() < 0.01) { // Log ~1% of frames
-      console.log('Frame update - camera rotation:', camera.rotation);
-      console.log('Current rotation state:', rotation.current);
-      console.log('Camera up vector:', camera.up);
-    }
 
     // Calculate movement direction based on camera orientation
     const forward = new THREE.Vector3(0, 0, -1);
