@@ -140,7 +140,6 @@ export function LevelSelector({
                 className="flex-[7] border-border hover:bg-accent min-w-0"
                 onClick={triggerFileInput}
                 disabled={uploadStatus === 'loading'}
-                tabIndex={-1}
               >
                 <div className="flex items-center min-w-0">
                   {getUploadStatusIcon()}
@@ -154,7 +153,6 @@ export function LevelSelector({
                 className="flex-[3] border-border min-w-0"
                 onClick={() => setShowUploadedLevel(!showUploadedLevel)}
                 disabled={!isCustomLevel}
-                tabIndex={-1}
               >
                 <span className="truncate">{showUploadedLevel ? 'URL' : 'Uploaded'}</span>
               </Button>
@@ -198,7 +196,6 @@ export function LevelSelector({
                 size="sm"
                 className="flex-1 border-border min-w-0"
                 onClick={() => setIsHighPoly(!isHighPoly)}
-                tabIndex={-1}
               >
                 <span className="truncate">{isHighPoly ? 'Low Poly' : 'High Poly'}</span>
               </Button>
@@ -209,7 +206,6 @@ export function LevelSelector({
                 className="flex-1 border-border disabled:opacity-50 disabled:cursor-not-allowed min-w-0"
                 onClick={() => setUseFarColors(!useFarColors)}
                 disabled={!isHighPoly}
-                tabIndex={-1}
               >
                 <span className="truncate">{useFarColors ? 'Vertex' : 'Far'}</span>
               </Button>
@@ -238,7 +234,6 @@ export function LevelSelector({
                       <Button
                         variant="outline"
                         className="w-full justify-between font-semibold h-auto p-3"
-                        tabIndex={-1}
                       >
                         <span>{homeworld.name}</span>
                         {expandedHomeworlds[homeworld.name] ? (
@@ -259,7 +254,6 @@ export function LevelSelector({
                             e.stopPropagation();
                             handleLevelClick(homeworld.name);
                           }}
-                          tabIndex={-1}
                         >
                           Homeworld
                         </Button>
@@ -271,7 +265,6 @@ export function LevelSelector({
                             size="sm"
                             className={getLevelButtonClassName(level.name)}
                             onClick={() => handleLevelClick(level.name)}
-                            tabIndex={-1}
                           >
                             {level.name}
                           </Button>

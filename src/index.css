@@ -159,6 +159,22 @@ body {
   display: none;
 }
 
+/* Disable all focus outlines and tab index indicators */
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+*:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+*:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* Ensure scrolling still works */
 html, body {
   overflow-x: hidden;
