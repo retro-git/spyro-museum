@@ -44,6 +44,14 @@ export function LevelSelector({
     setCurrentLevelPath(path);
   };
 
+  const getLevelButtonClassName = (levelName: string) => {
+    return `w-full justify-center h-auto p-2 ${
+      currentLevelPath?.includes(toSnakeCase(levelName))
+        ? 'bg-primary font-semibold'
+        : ''
+    }`;
+  };
+
   return (
     <div className="absolute top-2.5 right-2.5 w-80 max-h-[90vh] z-[1000]">
       <Card className="bg-card/90 border-border backdrop-blur-none">
@@ -119,11 +127,7 @@ export function LevelSelector({
                         <Button
                           variant="outline"
                           size="sm"
-                          className={`w-full justify-center h-auto p-2 ${
-                            currentLevelPath?.includes(toSnakeCase(homeworld.name))
-                              ? 'bg-primary font-semibold'
-                              : ''
-                          }`}
+                          className={getLevelButtonClassName(homeworld.name)}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleLevelClick(homeworld.name);
@@ -137,11 +141,7 @@ export function LevelSelector({
                             key={level.name}
                             variant="outline"
                             size="sm"
-                            className={`w-full justify-center h-auto p-2 ${
-                              currentLevelPath?.includes(toSnakeCase(level.name))
-                                ? 'bg-primary font-semibold'
-                                : ''
-                            }`}
+                            className={getLevelButtonClassName(level.name)}
                             onClick={() => handleLevelClick(level.name)}
                           >
                             {level.name}
