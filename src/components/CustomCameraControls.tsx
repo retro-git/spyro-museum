@@ -101,6 +101,20 @@ export function CustomCameraControls({
   // Handle keyboard input
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle camera controls if user is typing in an input field
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.contentEditable === 'true') {
+        return;
+      }
+
+      // Check if the key is one of our camera control keys
+      const isCameraKey = ['KeyW', 'KeyS', 'KeyA', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code);
+      
+      if (isCameraKey) {
+        // Prevent default behavior for camera movement keys to avoid scrolling/highlighting
+        e.preventDefault();
+      }
+      
       keys.current.add(e.code);
       
       switch (e.code) {
@@ -130,6 +144,12 @@ export function CustomCameraControls({
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
+      // Don't handle camera controls if user is typing in an input field
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.contentEditable === 'true') {
+        return;
+      }
+
       keys.current.delete(e.code);
       
       switch (e.code) {
