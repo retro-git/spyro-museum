@@ -105,15 +105,19 @@ export function CustomCameraControls({
       
       switch (e.code) {
         case 'KeyW':
+        case 'ArrowUp':
           setIsMovingForward(true);
           break;
         case 'KeyS':
+        case 'ArrowDown':
           setIsMovingBackward(true);
           break;
         case 'KeyA':
+        case 'ArrowLeft':
           setIsMovingLeft(true);
           break;
         case 'KeyD':
+        case 'ArrowRight':
           setIsMovingRight(true);
           break;
         case 'Escape':
@@ -130,15 +134,19 @@ export function CustomCameraControls({
       
       switch (e.code) {
         case 'KeyW':
+        case 'ArrowUp':
           setIsMovingForward(false);
           break;
         case 'KeyS':
+        case 'ArrowDown':
           setIsMovingBackward(false);
           break;
         case 'KeyA':
+        case 'ArrowLeft':
           setIsMovingLeft(false);
           break;
         case 'KeyD':
+        case 'ArrowRight':
           setIsMovingRight(false);
           break;
       }
