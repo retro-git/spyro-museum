@@ -188,7 +188,7 @@ function LevelViewer() {
       >
         <CustomCameraControls
           movementSpeed={3}
-          lookSpeed={0.01}
+          lookSpeed={0.0035}
         />
         <ambientLight intensity={1.3} />
 
