@@ -64,18 +64,18 @@ export function LevelSelector({
             </div>
             
             <Button
-              variant="secondary"
+              variant="default"
               size="sm"
-              className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border-border"
+              className="w-full bg-primary hover:bg-primary/80 text-primary-foreground border-border"
               onClick={() => setIsHighPoly(!isHighPoly)}
             >
               {isHighPoly ? 'Switch to Low Poly' : 'Switch to High Poly'}
             </Button>
 
             <Button
-              variant="secondary"
+              variant="default"
               size="sm"
-              className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border-border disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-primary hover:bg-primary/80 text-primary-foreground border-border disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => setUseFarColors(!useFarColors)}
               disabled={!isHighPoly}
             >
@@ -102,8 +102,8 @@ export function LevelSelector({
                   >
                     <CollapsibleTrigger asChild>
                       <Button
-                        variant="ghost"
-                        className="w-full justify-between bg-secondary hover:bg-secondary/80 text-muted-foreground font-semibold h-auto p-3"
+                        variant="default"
+                        className="w-full justify-between bg-primary hover:bg-primary/80 text-primary-foreground font-semibold h-auto p-3"
                       >
                         <span>{homeworld.name}</span>
                         {expandedHomeworlds[homeworld.name] ? (
@@ -117,11 +117,11 @@ export function LevelSelector({
                     <CollapsibleContent className="space-y-1 mt-2">
                       <div className="space-y-1">
                         <Button
-                          variant="ghost"
+                          variant="default"
                           size="sm"
-                          className={`w-full justify-center bg-secondary hover:bg-secondary/80 text-secondary-foreground h-auto p-2 ${
+                          className={`w-full justify-center bg-primary hover:bg-primary/80 text-primary-foreground h-auto p-2 ${
                             currentLevelPath?.includes(toSnakeCase(homeworld.name))
-                              ? 'bg-secondary font-semibold'
+                              ? 'bg-primary font-semibold'
                               : ''
                           }`}
                           onClick={(e) => {
@@ -135,11 +135,11 @@ export function LevelSelector({
                         {homeworld.levels.map((level) => (
                           <Button
                             key={level.name}
-                            variant="ghost"
+                            variant="default"
                             size="sm"
-                            className={`w-full justify-center bg-secondary hover:bg-secondary/80 text-secondary-foreground h-auto p-2 ${
+                            className={`w-full justify-center bg-primary hover:bg-primary/80 text-primary-foreground h-auto p-2 ${
                               currentLevelPath?.includes(toSnakeCase(level.name))
-                                ? 'bg-secondary font-semibold'
+                                ? 'bg-primary font-semibold'
                                 : ''
                             }`}
                             onClick={() => handleLevelClick(level.name)}
