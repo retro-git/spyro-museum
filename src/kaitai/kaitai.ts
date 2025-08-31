@@ -22,7 +22,11 @@ const KAITAI_IMPORT_LINE = `import KaitaiStream from "kaitai-struct";\n`;
 // UMD regex definitions
 const UMD_START_REGEX =
   /\(function\s*\(root\s*,\s*factory\s*\)\s*\{[\s\S]*?function\s*\([\s\S]*?\)\s*\{/;
-const UMD_END_REGEX = /return\s+(\w+)\s*;\s*\}\)\)\s*;\s*[\s\S]*$/;
+// Old UMD format: return SpyroLevel; })); 
+// const UMD_END_REGEX = /return\s+(\w+)\s*;\s*\}\)\)\s*;\s*[\s\S]*$/;
+
+// New format: SpyroLevel_.SpyroLevel = SpyroLevel; });
+const UMD_END_REGEX = /(\w+)\.(\w+)\s*=\s*(\w+)\s*;\s*\}\)\s*;\s*[\s\S]*$/;
 
 /**
  * Utility to run a shell command, printing output to stdout/stderr.
@@ -47,7 +51,8 @@ function umdToEs6(filePath: string): void {
   const fileContent = fs.readFileSync(filePath, "utf8");
   const result = fileContent
     .replace(UMD_START_REGEX, KAITAI_IMPORT_LINE)
-    .replace(UMD_END_REGEX, (_, identifier: string) => `export default ${identifier};\n`);
+    //.replace(UMD_END_REGEX, (_, identifier: string) => `export default ${identifier};\n`);
+    .replace(UMD_END_REGEX, (_, namespace: string, className: string, identifier: string) => `export default ${identifier};\n`);
 
   fs.writeFileSync(filePath, result, "utf8");
 }
