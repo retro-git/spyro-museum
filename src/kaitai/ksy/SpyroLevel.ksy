@@ -3,6 +3,7 @@ meta:
   # Adjust file/class name to your preference
   file-extension: bin
   endian: le
+  bit-endian: le
 
 seq:
   # First 4 bytes = mesh_offset
@@ -10,12 +11,18 @@ seq:
     type: u4
   - id: texture_count
     type: u4
-
+  # We'll use instances to create the proper texture structure
 instances:
   # Read part_count at (mesh_offset + 4)
   part_count:
     pos: mesh_offset + 4
     type: u4
+  
+  # Create individual texture objects, each with access to their 23 tiles
+  textures:
+    type: texture_data(_index)
+    repeat: expr
+    repeat-expr: texture_count
 
   # Read `part_headers` array starting at (mesh_offset + 8)
   part_headers:
@@ -24,7 +31,65 @@ instances:
     repeat: expr
     repeat-expr: part_count
 
+
+
 types:
+  clut:
+    seq:
+      - id: x
+        type: b6
+      - id: y
+        type: b10
+  tpage:
+    seq:
+      - id: x
+        type: b4
+      - id: y
+        type: b1
+      - id: abr
+        type: b2
+      - id: tp
+        type: b2
+      - id: pad
+        type: b7
+
+  s1_tiledef:
+    seq:
+      - id: u0
+        type: u1
+      - id: v0
+        type: u1
+      - id: clut
+        type: clut
+      - id: u1
+        type: u1
+      - id: v1
+        type: u1
+      - id: tpage
+        type: tpage
+
+  texture_data:
+    params:
+      - id: texture_index
+        type: u4
+    # No seq needed since we're only using instances
+    
+    instances:
+      # Get the 2 initial tiles for this texture
+      # texture_index parameter gives us the texture index
+      initial_tiles:
+        pos: 8 + texture_index * 16  # 8 + texture_index * (2 tiles * 8 bytes)
+        type: s1_tiledef
+        repeat: expr
+        repeat-expr: 2
+      
+      # Get the 21 remaining tiles for this texture
+      remaining_tiles:
+        pos: 8 + _root.texture_count * 16 + texture_index * 168  # Skip past initial tiles + texture_index * (21 tiles * 8 bytes)
+        type: s1_tiledef
+        repeat: expr
+        repeat-expr: 21
+
 
   part_header:
     seq:

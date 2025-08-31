@@ -15,6 +15,22 @@ var SpyroLevel = (function() {
     this.textureCount = this._io.readU4le();
   }
 
+  var Clut = SpyroLevel.Clut = (function() {
+    function Clut(_io, _parent, _root) {
+      this._io = _io;
+      this._parent = _parent;
+      this._root = _root;
+
+      this._read();
+    }
+    Clut.prototype._read = function() {
+      this.x = this._io.readBitsIntLe(6);
+      this.y = this._io.readBitsIntLe(10);
+    }
+
+    return Clut;
+  })();
+
   var ColorRgba = SpyroLevel.ColorRgba = (function() {
     function ColorRgba(_io, _parent, _root) {
       this._io = _io;
@@ -274,6 +290,88 @@ var SpyroLevel = (function() {
     return PartHeader;
   })();
 
+  var S1Tiledef = SpyroLevel.S1Tiledef = (function() {
+    function S1Tiledef(_io, _parent, _root) {
+      this._io = _io;
+      this._parent = _parent;
+      this._root = _root;
+
+      this._read();
+    }
+    S1Tiledef.prototype._read = function() {
+      this.u0 = this._io.readU1();
+      this.v0 = this._io.readU1();
+      this.clut = new Clut(this._io, this, this._root);
+      this.u1 = this._io.readU1();
+      this.v1 = this._io.readU1();
+      this.tpage = new Tpage(this._io, this, this._root);
+    }
+
+    return S1Tiledef;
+  })();
+
+  var TextureData = SpyroLevel.TextureData = (function() {
+    function TextureData(_io, _parent, _root, textureIndex) {
+      this._io = _io;
+      this._parent = _parent;
+      this._root = _root;
+      this.textureIndex = textureIndex;
+
+      this._read();
+    }
+    TextureData.prototype._read = function() {
+    }
+    Object.defineProperty(TextureData.prototype, 'initialTiles', {
+      get: function() {
+        if (this._m_initialTiles !== undefined)
+          return this._m_initialTiles;
+        var _pos = this._io.pos;
+        this._io.seek(8 + this.textureIndex * 16);
+        this._m_initialTiles = [];
+        for (var i = 0; i < 2; i++) {
+          this._m_initialTiles.push(new S1Tiledef(this._io, this, this._root));
+        }
+        this._io.seek(_pos);
+        return this._m_initialTiles;
+      }
+    });
+    Object.defineProperty(TextureData.prototype, 'remainingTiles', {
+      get: function() {
+        if (this._m_remainingTiles !== undefined)
+          return this._m_remainingTiles;
+        var _pos = this._io.pos;
+        this._io.seek((8 + this._root.textureCount * 16) + this.textureIndex * 168);
+        this._m_remainingTiles = [];
+        for (var i = 0; i < 21; i++) {
+          this._m_remainingTiles.push(new S1Tiledef(this._io, this, this._root));
+        }
+        this._io.seek(_pos);
+        return this._m_remainingTiles;
+      }
+    });
+
+    return TextureData;
+  })();
+
+  var Tpage = SpyroLevel.Tpage = (function() {
+    function Tpage(_io, _parent, _root) {
+      this._io = _io;
+      this._parent = _parent;
+      this._root = _root;
+
+      this._read();
+    }
+    Tpage.prototype._read = function() {
+      this.x = this._io.readBitsIntLe(4);
+      this.y = this._io.readBitsIntLe(1) != 0;
+      this.abr = this._io.readBitsIntLe(2);
+      this.tp = this._io.readBitsIntLe(2);
+      this.pad = this._io.readBitsIntLe(7);
+    }
+
+    return Tpage;
+  })();
+
   var XyzEntry = SpyroLevel.XyzEntry = (function() {
     function XyzEntry(_io, _parent, _root) {
       this._io = _io;
@@ -335,6 +433,17 @@ var SpyroLevel = (function() {
       }
       this._io.seek(_pos);
       return this._m_partHeaders;
+    }
+  });
+  Object.defineProperty(SpyroLevel.prototype, 'textures', {
+    get: function() {
+      if (this._m_textures !== undefined)
+        return this._m_textures;
+      this._m_textures = [];
+      for (var i = 0; i < this.textureCount; i++) {
+        this._m_textures.push(new TextureData(this._io, this, this._root, i));
+      }
+      return this._m_textures;
     }
   });
 
