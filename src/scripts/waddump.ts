@@ -164,7 +164,7 @@ async function main(): Promise<void> {
     await fs.writeFile(levelOutputPath, lvlData);
     console.log(`Extracted level file: ${levelOutputPath}`);
 
-    const lvlHeader = parseLVLHeader(lvlData.slice(0, 80));
+    const lvlHeader = parseLVLHeader(lvlData.subarray(0, 80));
 
     // Extract each subfile directly from lvlData
     for (let j = 0; j < lvlHeader.s.length; j++) {
