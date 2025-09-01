@@ -159,6 +159,11 @@ async function main(): Promise<void> {
       continue;
     }
 
+    // Extract the complete level file first
+    const levelOutputPath = path.join(lvlPathDir, `${levelNameSnakeCase}.lvl`);
+    await fs.writeFile(levelOutputPath, lvlData);
+    console.log(`Extracted level file: ${levelOutputPath}`);
+
     const lvlHeader = parseLVLHeader(lvlData.slice(0, 80));
 
     // Extract each subfile directly from lvlData
