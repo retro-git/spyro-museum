@@ -100,7 +100,7 @@ function LevelViewer() {
   useEffect(() => {
     const fetchLevels = async () => {
       try {
-        const response = await fetch('/levels/levels.json');
+        const response = await fetch('/levels.json');
         const levelsData: GameData = await response.json();
         setGameData(levelsData);
 
