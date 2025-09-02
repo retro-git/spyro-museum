@@ -79,11 +79,40 @@ var SpyroLevel = (function() {
       this._read();
     }
     LowVert.prototype._read = function() {
-      this.v0 = this._io.readU1();
-      this.v1 = this._io.readU1();
-      this.v2 = this._io.readU1();
-      this.v3 = this._io.readU1();
+      this.raw = this._io.readU4le();
     }
+    Object.defineProperty(LowVert.prototype, 'v0', {
+      get: function() {
+        if (this._m_v0 !== undefined)
+          return this._m_v0;
+        this._m_v0 = ((this.raw >>> 8) & 63);
+        return this._m_v0;
+      }
+    });
+    Object.defineProperty(LowVert.prototype, 'v1', {
+      get: function() {
+        if (this._m_v1 !== undefined)
+          return this._m_v1;
+        this._m_v1 = ((this.raw >>> 14) & 63);
+        return this._m_v1;
+      }
+    });
+    Object.defineProperty(LowVert.prototype, 'v2', {
+      get: function() {
+        if (this._m_v2 !== undefined)
+          return this._m_v2;
+        this._m_v2 = ((this.raw >>> 20) & 63);
+        return this._m_v2;
+      }
+    });
+    Object.defineProperty(LowVert.prototype, 'v3', {
+      get: function() {
+        if (this._m_v3 !== undefined)
+          return this._m_v3;
+        this._m_v3 = ((this.raw >>> 26) & 63);
+        return this._m_v3;
+      }
+    });
 
     return LowVert;
   })();
@@ -119,7 +148,9 @@ var SpyroLevel = (function() {
       this.y = this._io.readBitsIntLe(1) != 0;
       this.abr = this._io.readBitsIntLe(2);
       this.tp = this._io.readBitsIntLe(2);
-      this.pad = this._io.readBitsIntLe(7);
+      this.pad = this._io.readBitsIntLe(3);
+      this.rotate = this._io.readBitsIntLe(3);
+      this.width32 = this._io.readBitsIntLe(1) != 0;
     }
 
     return Tpage;
@@ -261,11 +292,40 @@ var SpyroLevel = (function() {
       this._read();
     }
     LowColor.prototype._read = function() {
-      this.c0 = this._io.readU1();
-      this.c1 = this._io.readU1();
-      this.c2 = this._io.readU1();
-      this.c3 = this._io.readU1();
+      this.raw = this._io.readU4le();
     }
+    Object.defineProperty(LowColor.prototype, 'c0', {
+      get: function() {
+        if (this._m_c0 !== undefined)
+          return this._m_c0;
+        this._m_c0 = ((this.raw >>> 8) & 63);
+        return this._m_c0;
+      }
+    });
+    Object.defineProperty(LowColor.prototype, 'c1', {
+      get: function() {
+        if (this._m_c1 !== undefined)
+          return this._m_c1;
+        this._m_c1 = ((this.raw >>> 14) & 63);
+        return this._m_c1;
+      }
+    });
+    Object.defineProperty(LowColor.prototype, 'c2', {
+      get: function() {
+        if (this._m_c2 !== undefined)
+          return this._m_c2;
+        this._m_c2 = ((this.raw >>> 20) & 63);
+        return this._m_c2;
+      }
+    });
+    Object.defineProperty(LowColor.prototype, 'c3', {
+      get: function() {
+        if (this._m_c3 !== undefined)
+          return this._m_c3;
+        this._m_c3 = ((this.raw >>> 26) & 63);
+        return this._m_c3;
+      }
+    });
 
     return LowColor;
   })();
@@ -356,7 +416,7 @@ var SpyroLevel = (function() {
         if (this._m_remainingTiles !== undefined)
           return this._m_remainingTiles;
         var _pos = this._io.pos;
-        this._io.seek(((8 + (this._root.textureCount * 16)) + (this.textureIndex * 168)));
+        this._io.seek(((8 + (this._root.textureCount * 16)) + (this.textureIndex * (21 * 8))));
         this._m_remainingTiles = [];
         for (var i = 0; i < 21; i++) {
           this._m_remainingTiles.push(new S1Tiledef(this._io, this, this._root));

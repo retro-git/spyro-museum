@@ -51,7 +51,20 @@ types:
       - id: tp
         type: b2
       - id: pad
-        type: b7
+        type: b3
+        # Rotate: 
+        # 0: normal
+        # 1: rotate 90° left
+        # 2: rotate 180°
+        # 3: rotate 90° right
+        # 4: mirror + 90° left
+        # 5: mirror
+        # 6: mirror + 90° right
+        # 7: mirror + 180°
+      - id: rotate
+        type: b3
+      - id: width_32
+        type: b1
 
   s1_tiledef:
     seq:
@@ -85,7 +98,7 @@ types:
       
       # Get the 21 remaining tiles for this texture
       remaining_tiles:
-        pos: 8 + _root.texture_count * 16 + texture_index * 168  # Skip past initial tiles + texture_index * (21 tiles * 8 bytes)
+        pos: 8 + _root.texture_count * 16 + texture_index * (21 * 8)  # Skip past initial tiles + texture_index * (21 tiles * 8 bytes)
         type: s1_tiledef
         repeat: expr
         repeat-expr: 21
@@ -233,25 +246,31 @@ types:
 
   low_vert:
     seq:
-      - id: v0
-        type: u1
-      - id: v1
-        type: u1
-      - id: v2
-        type: u1
-      - id: v3
-        type: u1
+      - id: raw
+        type: u4
+    instances:
+      v0:
+        value: (raw >> 8) & 0x3f
+      v1:
+        value: (raw >> 14) & 0x3f
+      v2:
+        value: (raw >> 20) & 0x3f
+      v3:
+        value: (raw >> 26) & 0x3f
 
   low_color:
     seq:
-      - id: c0
-        type: u1
-      - id: c1
-        type: u1
-      - id: c2
-        type: u1
-      - id: c3
-        type: u1
+      - id: raw
+        type: u4
+    instances:
+      c0:
+        value: (raw >> 8) & 0x3f
+      c1:
+        value: (raw >> 14) & 0x3f
+      c2:
+        value: (raw >> 20) & 0x3f
+      c3:
+        value: (raw >> 26) & 0x3f
 
   # read_highpoly -> read_highvert + read_highcolor + skip 8
   high_poly:
